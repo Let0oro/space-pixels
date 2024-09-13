@@ -1,96 +1,108 @@
-import { Dispatch, SetStateAction, useState } from "react";
 import Canvas from "./Canvas";
+import { useCanvasAttributes } from "../../context/pixelContext";
+import { useMemo, useState } from "react";
+import { MuiColorInput } from "mui-color-input";
+import { TinyColor } from "@ctrl/tinycolor";
+import ShowAvatar from "./ShowAvatar";
 
 const confirmAvatar = () => {};
 
 const PixelStudio = () => {
-  const [size, setSize]: [number, Dispatch<SetStateAction<number>>] =
-    useState(32);
-  const [currColor, setCurrColor]: [string, Dispatch<SetStateAction<string>>] =
-    useState("");
-  const [currSize, setCurrSize]: [number, Dispatch<SetStateAction<number>>] =
-    useState(size);
+  const { size, clr, setPxArr, setClr, setSize } = useCanvasAttributes(
+    ({ size, clr, setPxArr, setClr, setSize }) => ({
+      size,
+      clr,
+      setPxArr,
+      setClr,
+      setSize,
+    })
+  );
 
-  const defaultCanvas = Array(size).fill(Array(size).fill("#0000"));
+  useMemo(() => {
+    const tinyClr = new TinyColor(clr);
+    if (tinyClr.format != "hex") setClr(tinyClr.toHex8String());
+  }, [clr]);
 
-  const [canvasColors, setCanvasColors]: [
-    Array<Array<string>>,
-    Dispatch<SetStateAction<Array<Array<string>>>>,
-  ] = useState(defaultCanvas);
+  useMemo(() => {
+    setPxArr(Array(size).fill(Array(size).fill("#0000")));
+  }, [size]);
+
+  const [currentSize, setCurrentSize] = useState<number>(size);
 
   return (
     <>
       <h2>Create your hero</h2>
       <label
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          margin: "1rem auto",
-          gap: ".5rem",
-          width: "10rem",
-        }}
+        style={{...styles.labelNumber, alignItems: "stretch", position: "relative",}}
       >
-        <input
-          style={styles.numberInput}
-          type="number"
-          defaultValue={32}
-          max={32}
-          min={0}
-          value={currSize}
-          onChange={(e) => setCurrSize(Number(e.target.value))}
-        />
+        <select
+          className="number_selector"
+          style={styles.numberSelector}
+          value={currentSize}
+          onChange={(e) => setCurrentSize(Number(e.target.value))}
+        >
+          <option>32</option>
+          <option>16</option>
+          <option>8</option>
+        </select>
         <button
+          style={styles.buttonNumber}
           onClick={() => {
             if (
+              currentSize != size &&
               confirm(
                 "Are you sure to change the canvas size? This action will clear the current pixel art"
               )
             ) {
-              setSize(currSize);
+              setSize(currentSize);
             }
           }}
         >
           Change size
         </button>
       </label>
-      <label style={styles.labelColor}>
-        <input
-          type="color"
-          onChange={(e) => setCurrColor(e.target.value)}
-          value={currColor}
-        />
-        <span>
-          {" "}
-          {"->"} {currColor || "#000"}
-        </span>
-      </label>
-      <Canvas
-        size={size}
-        currColor={currColor}
-        canvasColors={canvasColors}
-        setCanvasColors={setCanvasColors}
+      <MuiColorInput
+        value={clr}
+        onChange={setClr}
+        className="color-input"
+        style={{
+          marginBottom: "1rem",
+          border: `1px solid ${clr}`,
+          borderRadius: "8px",
+          color: clr
+        }}
+        slotProps={{ htmlInput: { value: clr }}}
+        data-clr={clr}
       />
-      <button onClick={confirmAvatar}>Confirm avatar</button>
+      <Canvas />
+      <div style={styles.finalDiv}>
+        <ShowAvatar />
+        <button onClick={confirmAvatar}>Confirm avatar</button>
+      </div>
     </>
   );
 };
 
 const styles = {
-  labelColor: {
-    display: "block",
-    marginBottom: "1rem",
+  numberSelector: {
+    borderBottomLeftRadius: "8px",
+    borderTopLeftRadius: "8px",
   },
-  numberInput: {
-    width: "3rem",
-    marginBottom: "1rem",
+  buttonNumber: {
+    borderBottomLeftRadius: 0,
+    borderTopLeftRadius: 0,
   },
   labelNumber: {
     display: "flex",
-    flexDirection: "column",
-    gap: ".5rem",
+    margin: "1rem auto",
     width: "10rem",
-    marginBottom: "1rem",
+  },
+  finalDiv: {
+    display: "flex",
+    justifyContent: "space-around",
+    alignItems: "center",
+    gap: "1rem",
+    marginTop: "1rem",
   },
 };
 
