@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { MuiColorInput } from "mui-color-input";
 import { TinyColor } from "@ctrl/tinycolor";
 import ShowAvatar from "../components/PixelStudio/ShowAvatar";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const confirmAvatar = () => {
   // Coger fetchServices y controller de proyecto en que lo hice
@@ -19,6 +20,8 @@ const PixelStudio = () => {
       setSize,
     })
   );
+  const queryClient = new QueryClient();
+
 
   useMemo(() => {
     const tinyClr = new TinyColor(clr);
@@ -37,8 +40,11 @@ const PixelStudio = () => {
 
   const [currentSize, setCurrentSize] = useState<number>(size);
 
+
+
   return (
-    <>
+    <QueryClientProvider client={queryClient}>      
+
       <h2>Create your hero</h2>
       <label
         style={{
@@ -105,7 +111,7 @@ const PixelStudio = () => {
         <ShowAvatar />
         <button onClick={confirmAvatar}>Confirm avatar</button>
       </div>
-    </>
+      </QueryClientProvider>
   );
 };
 

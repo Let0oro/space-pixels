@@ -41,6 +41,18 @@
   color: #888;
 }
 
+form legend {
+  font-size: large;
+}
+form input {
+  text-align: center;
+  font-size: 1rem;
+  border: 1px solid #888;
+  border-radius: 0;
+  background-color: #3B3B3B;
+  outline: 0;
+}
+
 .number_selector {
   width: 3rem;
   border: "1px solid transparent";

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./Entrance.css";
+import MessageToSL from "./MessageToSL";
 const Entrance = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -13,20 +14,19 @@ const Entrance = () => {
       if (audioRef.current?.volume) {
         audioRef.current.volume = 0.5;
       }
-    }, 55000);
+    }, 45000);
     setTimeout(() => {
       setFinish(!finish);
       if (audioRef.current?.volume) {
         audioRef.current.volume = 0;
       }
-    }, 60000);
+    }, 50000);
   }, []);
 
-  if (finish) return (
-    <h2>Please, login or signup to get starting with your adventure</h2>
-  )
+  if (finish) return <MessageToSL />;
 
-  return (
+  if (!finish) 
+    return (
     <div
       className="bodyEntrance"
       style={{
@@ -34,10 +34,7 @@ const Entrance = () => {
       }}
     >
       <div className="star-wars-intro">
-        <audio
-          ref={audioRef}
-          src="../../../public/star-wars-intro.mp3"
-        />
+        <audio ref={audioRef} src="../../../public/star-wars-intro.mp3" />
         <div className="crawl">
           <p className="title">SPACE INVADERS</p>
           <p>Hace mucho tiempo, en una galaxia no tan lejana...</p>
@@ -81,7 +78,4 @@ const Entrance = () => {
     </div>
   );
 };
-
-const styles = {};
-
 export default Entrance;

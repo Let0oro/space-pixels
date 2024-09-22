@@ -5,6 +5,9 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./components/ErrorPage.tsx";
 import Entrance from "./components/Entrance/Entrance.tsx";
+import PixelStudio from "./pages/PixelStudio.tsx";
+import Settings from "./pages/Settings.tsx";
+import LogSing from "./pages/LogSign.tsx";
 
 const router = createBrowserRouter([
   {
@@ -13,19 +16,29 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage  />,
     children: [
       {
-        path: "/app",
+        path: "main",
         element: <Entrance />,
       },
       {
         path: "/login",
+        element: <LogSing type="login" />
       },
       {
         path: "/signup",
-      },
-      {
-        path: "/game",
+        element: <LogSing type="signup" />
       },
     ],
+  },
+  {
+    path: "/pixel",
+    element: <PixelStudio  />
+  },
+  {
+    path: "/settings",
+    element: <Settings  />
+  },
+  {
+    path: "/game",
   },
 ]);
 
