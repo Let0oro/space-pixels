@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import {
   useForm,
   SubmitHandler,
@@ -21,9 +22,23 @@ const ErrorSpan = ({ errorObj }: ErrorSpanProps) => {
     return <span style={{ color: "#e44" }}>{errorObj.message}</span>;
 };
 
+const RegularInput = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) => {
+  return (
+    <label>
+      {title} -{"> "}
+      {children}
+    </label>
+  );
+};
+
 const PassInput = ({ register }: { register: UseFormRegister<Inputs> }) => (
-  <fieldset>
-    <legend>password</legend>
+  <RegularInput title="password">
     <input
       type="password"
       {...register("password", {
@@ -38,7 +53,7 @@ const PassInput = ({ register }: { register: UseFormRegister<Inputs> }) => (
         },
       })}
     />
-  </fieldset>
+  </RegularInput>
 );
 
 const LogSign = ({ type }: { type: string }) => {
@@ -57,15 +72,14 @@ const LogSign = ({ type }: { type: string }) => {
     return (
       <form onSubmit={handleSubmit(onSubmit)}>
         <h3>Login</h3>
-        <fieldset>
-          <legend>name or email</legend>
+        <RegularInput title="name or email">
           <input
             type="text"
             {...register("nameOrEmail", {
               required: "Name or Email is required",
             })}
           />
-        </fieldset>
+        </RegularInput>
         {<ErrorSpan errorObj={errors.nameOrEmail} />}
 
         <PassInput register={register} />
@@ -80,21 +94,19 @@ const LogSign = ({ type }: { type: string }) => {
     return (
       <form onSubmit={handleSubmit(onSubmit)}>
         <h3>Sign Up</h3>
-        <fieldset>
-          <legend>name</legend>
+        <RegularInput title="name">
           <input {...register("name", { required: "Name is required" })} />
-        </fieldset>
+        </RegularInput>
         {<ErrorSpan errorObj={errors.name} />}
 
-        <fieldset>
-          <legend>email</legend>
+        <RegularInput title="email">
           <input
             {...register("email", {
               required: "Email  is required",
               pattern: { value: /^\S+@\S+$/i, message: "Need email schema" },
             })}
           />
-        </fieldset>
+        </RegularInput>
         <ErrorSpan errorObj={errors.email} />
 
         <PassInput register={register} />
