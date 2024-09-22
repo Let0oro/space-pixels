@@ -19,7 +19,7 @@ interface ErrorSpanProps {
 
 const ErrorSpan = ({ errorObj }: ErrorSpanProps) => {
   if (errorObj)
-    return <span style={{ color: "#e44" }}>{errorObj.message}</span>;
+    return <span style={{ color: "#e44", textAlign: "end" }}>{errorObj.message}</span>;
 };
 
 const RegularInput = ({
@@ -30,7 +30,7 @@ const RegularInput = ({
   children: ReactNode;
 }) => {
   return (
-    <label>
+    <label style={{display: "block"}}>
       {title} -{"> "}
       {children}
     </label>
@@ -48,7 +48,7 @@ const PassInput = ({ register }: { register: UseFormRegister<Inputs> }) => (
         maxLength: 24,
         pattern: {
           message:
-            "the password must contain numbers, letters, capitalized and punctuation",
+            "The password must contain numbers, letters, capitalized and punctuation",
           value: /^[0-9]{8}[a-zA-Z._]/i,
         },
       })}
@@ -70,7 +70,7 @@ const LogSign = ({ type }: { type: string }) => {
 
   if (type == "login")
     return (
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form style={{display: "flex",  maxWidth:"400px", flexDirection:"column", gap: "0.5rem", alignItems: "end" }} onSubmit={handleSubmit(onSubmit)}>
         <h3>Login</h3>
         <RegularInput title="name or email">
           <input
@@ -92,7 +92,7 @@ const LogSign = ({ type }: { type: string }) => {
 
   if (type == "signup")
     return (
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form  style={{display: "flex", maxWidth:"400px", flexDirection:"column", gap: "0.5rem", alignItems: "end" }} onSubmit={handleSubmit(onSubmit)}>
         <h3>Sign Up</h3>
         <RegularInput title="name">
           <input {...register("name", { required: "Name is required" })} />
