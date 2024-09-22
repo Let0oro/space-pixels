@@ -1,17 +1,25 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  box-sizing: border-box;
+@import url("https://fonts.googleapis.com/css2?family=Tiny5&display=swap");
 
+:root {
+  font-family: "Tiny5", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 1.5;
+  font-size: 1.1rem;
+  box-sizing: border-box;
+  
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-
+  
   font-synthesis: none;
-  text-rendering: optimizeLegibility;
+  text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+*, input {
+  font-family: Tiny5;
 }
 
 .no-drag {
@@ -42,7 +50,7 @@ h1 {
 }
 
 button {
-  border-radius: 8px;
+  /* border-radius: 8px; */
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;

@@ -9,7 +9,6 @@ const ShowAvatar = () => {
   const varS = 32 / size;
 
   const boxShadow = useMemo(() => {
-    console.log({mouseMove})
     if (!mouseMove) {
         const returned = [];
         const pxLen = pxArr.length;
@@ -24,9 +23,6 @@ const ShowAvatar = () => {
         return returned.join(", ");  
     }
 }, [mouseMove]);
-
-    // console.clear();
-  //   console.log(boxShadow);
 
   return (
     <div style={styles.frame}>

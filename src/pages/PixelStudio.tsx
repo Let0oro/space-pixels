@@ -1,11 +1,13 @@
-import Canvas from "./Canvas";
-import { useCanvasAttributes } from "../../context/pixelContext";
-import { useMemo, useState } from "react";
+import Canvas from "../components/PixelStudio/Canvas";
+import { useCanvasAttributes } from "../context/pixelContext";
+import { useCallback, useMemo, useState } from "react";
 import { MuiColorInput } from "mui-color-input";
 import { TinyColor } from "@ctrl/tinycolor";
-import ShowAvatar from "./ShowAvatar";
+import ShowAvatar from "../components/PixelStudio/ShowAvatar";
 
-const confirmAvatar = () => {};
+const confirmAvatar = () => {
+  // Coger fetchServices y controller de proyecto en que lo hice
+};
 
 const PixelStudio = () => {
   const { size, clr, setPxArr, setClr, setSize } = useCanvasAttributes(
@@ -23,6 +25,12 @@ const PixelStudio = () => {
     if (tinyClr.format != "hex") setClr(tinyClr.toHex8String());
   }, [clr]);
 
+  const clrTransp = useCallback(
+    (ifIsTransp: string) =>
+      clr.length == 9 && clr.slice(-2) == "00" ? ifIsTransp : clr,
+    [clr]
+  );
+
   useMemo(() => {
     setPxArr(Array(size).fill(Array(size).fill("#0000")));
   }, [size]);
@@ -33,7 +41,11 @@ const PixelStudio = () => {
     <>
       <h2>Create your hero</h2>
       <label
-        style={{...styles.labelNumber, alignItems: "stretch", position: "relative",}}
+        style={{
+          ...styles.labelNumber,
+          alignItems: "stretch",
+          position: "relative",
+        }}
       >
         <select
           className="number_selector"
@@ -61,19 +73,33 @@ const PixelStudio = () => {
           Change size
         </button>
       </label>
-      <MuiColorInput
-        value={clr}
-        onChange={setClr}
-        className="color-input"
+      <label
         style={{
+          display: "flex",
+          alignItems: "stretch",
+          height: "min-content",
           marginBottom: "1rem",
-          border: `1px solid ${clr}`,
-          borderRadius: "8px",
-          color: clr
         }}
-        slotProps={{ htmlInput: { value: clr }}}
-        data-clr={clr}
-      />
+      >
+        <MuiColorInput
+          value={clr}
+          onChange={setClr}
+          className="color-input"
+          style={{
+            border: `1px solid ${clrTransp("#ffffffff")}`,
+            // borderRadius: "8px",
+            borderColor: clrTransp("#ffffffff"),
+            color: clrTransp("#ffffffff"),
+          }}
+          slotProps={{
+            htmlInput: {
+              style: { fontFamily: "Tiny5" },
+              value: clrTransp("transparent"),
+            },
+          }}
+        />
+        <button onClick={() => setClr("#00000000")}>Transparent</button>
+      </label>
       <Canvas />
       <div style={styles.finalDiv}>
         <ShowAvatar />
@@ -85,8 +111,8 @@ const PixelStudio = () => {
 
 const styles = {
   numberSelector: {
-    borderBottomLeftRadius: "8px",
-    borderTopLeftRadius: "8px",
+    // borderBottomLeftRadius: "8px",
+    // borderTopLeftRadius: "8px",
   },
   buttonNumber: {
     borderBottomLeftRadius: 0,

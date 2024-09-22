@@ -65,3 +65,7 @@ div.color-input > * {
   color: inherit;
   font-weight: 100;
 }
+
+div.color-input button {
+  border: 1px solid white;
+}

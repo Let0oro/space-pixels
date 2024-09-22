@@ -41,7 +41,7 @@ const Canvas = () => {
 
 const styles = {
   canvas: {
-    borderRadius: 8,
+    // borderRadius: 8,
     padding: 0,
     lineHeight: 0,
     overflow: "hidden",

@@ -1,5 +1,5 @@
 import './App.css'
-import PixelStudio from './components/PixelStudio/PixelStudio'
+import PixelStudio from './pages/PixelStudio'
 import {
   QueryClient,
   QueryClientProvider,
@@ -23,7 +23,7 @@ function App() {
           <li><b>domInteractive: </b>{new Date(window.performance.timing.domInteractive).getSeconds()} s</li>
         </ul>
       </div> */}
-      <h3>Spaces Pixel</h3> 
+      <h3 style={{position: "absolute", top: "0", left: "1rem",}}>Spaces Pixel</h3> 
       <PixelStudio />
     </QueryClientProvider>
     </>
