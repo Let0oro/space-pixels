@@ -65,9 +65,14 @@ const LogSign = ({ type }: { type: string }) => {
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.clear();
     console.log({ data });
-  };
-  if (errors) console.log({ errors });
+    if (type == "login") {
 
+    } 
+    if (type == "signup") {
+      
+    }
+  };
+  
   if (type == "login")
     return (
       <form style={{display: "flex",  maxWidth:"400px", flexDirection:"column", gap: "0.5rem", alignItems: "end" }} onSubmit={handleSubmit(onSubmit)}>
