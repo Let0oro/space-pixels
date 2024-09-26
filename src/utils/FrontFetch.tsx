@@ -23,12 +23,16 @@ interface parseMethodInterface {
   };
 }
 
+type pMethodType = parseMethodInterface[nameType][methodType];
+
 type methodType = "get" | "put" | "post" | "delete";
 type nameType = "user" | "pixel" | "score";
+type postUserType = "register" | "login" | "logout";
 type routeType = {
   name: nameType;
   method: methodType;
-  id: string;
+  postUser?: postUserType;
+  id?: string;
 };
 type optsType = {
   method?: string;
@@ -45,7 +49,7 @@ export class FrontFetch {
     user: {
       get: { get: "/", getAll: "/" },
       post: {
-        register: "/register",
+        register: "/",
         login: "/login",
         logout: "/logout",
       },
@@ -68,10 +72,11 @@ export class FrontFetch {
 
   static async Fetch(url: string, opts = {}) {
     try {
-      const response = await fetch(url, { ...opts });
+      const response = await fetch(url, { ...opts, mode: "cors" });
+      console.log({ response });
       const data = await response.json();
 
-      // console.log({ data, opts });
+      console.log({ data, opts });
 
       if (!response.ok) {
         throw new Error(
@@ -88,13 +93,17 @@ export class FrontFetch {
 
   static async caller(
     route: routeType,
-    formData: formType,
+    formData?: formType,
     opts: optsType = {}
   ) {
     const { parseMethod }: { parseMethod: parseMethodInterface } = this;
-    const { name, method, id }: routeType = route;
-    const pMethod: parseMethodInterface[nameType][methodType] =
-      parseMethod[name][method];
+    const { name, method, postUser, id }: routeType = route;
+    const pMethod: pMethodType = parseMethod[name][method];
+    const pMethodPU:
+      | parseMethodInterface["user"]["post"][postUserType]
+      | undefined = postUser
+      ? parseMethod["user"]["post"][postUser]
+      : undefined;
 
     opts = {
       method: method.toUpperCase(),
@@ -108,8 +117,11 @@ export class FrontFetch {
       opts.body = formData;
     }
     if (name != "user" || method != "get") opts.credentials = "include";
+    // opts.credentials = "include";
 
-    const url = `${this.baseUrl}${name}${pMethod}${id || ""}`;
+    console.log({ opts });
+
+    const url = `${this.baseUrl}${name}${postUser ? pMethodPU : pMethod}${id || ""}`;
     return await this.Fetch(url, opts);
   }
 }
