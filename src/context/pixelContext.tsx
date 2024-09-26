@@ -22,10 +22,9 @@ type CurrColorStore = {
 
 type CanvasAttributes = PixelStore &
   SizeCanvasStore & MouseStore &
-  CurrColorStore & { bckColor: string };
+  CurrColorStore;
 
 export const useCanvasAttributes = create<CanvasAttributes>()((set) => ({
-  bckColor: "#0000",
   mouseMove: false,
   setMouseMove: (mouseMove) => set(() => ({mouseMove})),
   pxArr: Array(8).fill(Array(8).fill("#0000")),

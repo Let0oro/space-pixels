@@ -73,7 +73,6 @@ export class FrontFetch {
   static async Fetch(url: string, opts = {}) {
     try {
       const response = await fetch(url, { ...opts, mode: "cors" });
-      console.log({ response });
       const data = await response.json();
 
       console.log({ data, opts });

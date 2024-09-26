@@ -8,6 +8,7 @@ import Entrance from "./components/Entrance/Entrance.tsx";
 import PixelStudio from "./pages/PixelStudio.tsx";
 import Settings from "./pages/Settings.tsx";
 import LogSing from "./pages/LogSign.tsx";
+import Game from "./pages/Game.tsx";
 
 const router = createBrowserRouter([
   {
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/game",
+    element: <Game  />
   },
 ]);
 

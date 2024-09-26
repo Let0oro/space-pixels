@@ -6,6 +6,7 @@ import {
   UseFormRegister,
 } from "react-hook-form";
 import { FrontFetch } from "../utils/FrontFetch";
+import { useNavigate } from "react-router-dom";
 
 type Inputs = {
   nameoremail?: string;
@@ -67,15 +68,15 @@ const PassInput = ({ register }: { register: UseFormRegister<Inputs> }) => (
 );
 
 const LogSign = ({ type }: { type: "login" | "register" }) => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    console.clear();
-    console.log({ data });
-    await FrontFetch.caller({ name: "user", method: "post", postUser: type }, data);
+    const response = await FrontFetch.caller({ name: "user", method: "post", postUser: type }, data);
+    if (response) navigate((type == "register" ? "/pixel" : "/game"))
   };
 
   if (type == "login")

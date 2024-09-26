@@ -2,10 +2,7 @@ import { useMemo } from "react";
 import { useCanvasAttributes } from "../../context/pixelContext";
 
 const ShowAvatar = () => {
-  const { pxArr, size, mouseMove } = useCanvasAttributes(({ pxArr, size, mouseMove }) => ({
-    pxArr,
-    size, mouseMove,
-  }));
+  const { pxArr, size, mouseMove } = useCanvasAttributes();
   const varS = 32 / size;
 
   const boxShadow = useMemo(() => {
@@ -20,7 +17,7 @@ const ShowAvatar = () => {
                 lineShadowRet.push(`${varS * ix}px ${varS * i}px 0 ${currRow[ix]}`);
             returned.push(lineShadowRet.join(", "));
         }
-        return returned.join(", ");  
+        return returned.join(",");
     }
 }, [mouseMove]);
 

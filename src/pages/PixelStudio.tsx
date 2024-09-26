@@ -5,23 +5,25 @@ import { MuiColorInput } from "mui-color-input";
 import { TinyColor } from "@ctrl/tinycolor";
 import ShowAvatar from "../components/PixelStudio/ShowAvatar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-const confirmAvatar = () => {
-  // Coger fetchServices y controller de proyecto en que lo hice
-};
+import { FrontFetch } from "../utils/FrontFetch";
 
 const PixelStudio = () => {
-  const { size, clr, setPxArr, setClr, setSize } = useCanvasAttributes(
-    ({ size, clr, setPxArr, setClr, setSize }) => ({
-      size,
-      clr,
-      setPxArr,
-      setClr,
-      setSize,
-    })
-  );
-  const queryClient = new QueryClient();
+  const {
+    pxArr,
+    size,
+    clr,
+    setPxArr,
+    setClr,
+    setSize,
+  } = useCanvasAttributes();
 
+  const confirmAvatar = async () => {
+    console.clear()
+    const data = pxArr.flat(1);
+    await  FrontFetch.caller({name: "pixel", method: "post"}, [size, ...data]);
+  };
+
+  const queryClient = new QueryClient();
 
   useMemo(() => {
     const tinyClr = new TinyColor(clr);
@@ -34,17 +36,19 @@ const PixelStudio = () => {
     [clr]
   );
 
+  const clrTranspBlind = useCallback(() => {
+    if (clr.length == 9)
+      setClr(clr.replace(/.{2}$/, clr.slice(-2) == "00" ? "ff" : "00"));
+  }, [clr]);
+
   useMemo(() => {
     setPxArr(Array(size).fill(Array(size).fill("#0000")));
   }, [size]);
 
   const [currentSize, setCurrentSize] = useState<number>(size);
 
-
-
   return (
-    <QueryClientProvider client={queryClient}>      
-
+    <QueryClientProvider client={queryClient}>
       <h2>Create your hero</h2>
       <label
         style={{
@@ -100,18 +104,18 @@ const PixelStudio = () => {
           slotProps={{
             htmlInput: {
               style: { fontFamily: "Tiny5" },
-              value: clrTransp("transparent"),
+              value: clrTransp("Transparent"),
             },
           }}
         />
-        <button onClick={() => setClr("#00000000")}>Transparent</button>
+        <button onClick={clrTranspBlind} >Eraser</button>
       </label>
       <Canvas />
       <div style={styles.finalDiv}>
         <ShowAvatar />
         <button onClick={confirmAvatar}>Confirm avatar</button>
       </div>
-      </QueryClientProvider>
+    </QueryClientProvider>
   );
 };
 
