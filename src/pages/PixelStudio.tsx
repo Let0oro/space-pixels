@@ -20,7 +20,7 @@ const PixelStudio = () => {
   const confirmAvatar = async () => {
     console.clear()
     const data = pxArr.flat(1);
-    await  FrontFetch.caller({name: "pixel", method: "post"}, [size, ...data]);
+    await  FrontFetch.caller({name: "pixel", method: "post"}, [`${size}`, ...data]);
   };
 
   const queryClient = new QueryClient();
