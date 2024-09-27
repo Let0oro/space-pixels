@@ -59,7 +59,7 @@ const ColorInput = () => {
   }, [clr]);
 
   return (
-    <div style={{display: "flex", flexDirection: "row", gap: "0"}}>
+    <div style={{display: "flex", flexDirection: "row", gap: "0", justifyContent: "center"}}>
       <MuiColorInput
         value={clr}
         onChange={setClr}

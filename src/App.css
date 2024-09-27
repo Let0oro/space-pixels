@@ -41,6 +41,19 @@
   color: #888;
 }
 
+.button_play {
+  color: #B836BA;
+  margin: .5rem auto;
+  border: 2px solid #B836BA;
+  background-color: transparent;
+  transition: background-color .2s, color .2s;
+}
+
+.button_play:hover {
+  background-color: #b836ba;
+  color: #242424
+}
+
 form legend {
   font-size: large;
 }
@@ -49,7 +62,7 @@ form input {
   font-size: 1rem;
   border: 1px solid #888;
   border-radius: 0;
-  background-color: #3B3B3B;
+  background-color: #3b3b3b;
   outline: 0;
 }
 
@@ -59,9 +72,9 @@ form input {
   border-bottom-left-radius: "8px";
   border-top-left-radius: "8px";
   background-color: #646cffc0;
-  transition: border-color 0.25s; 
+  transition: border-color 0.25s;
   border: 1px solid transparent;
-  border-color: transparent; 
+  border-color: transparent;
   padding: 4px;
   cursor: pointer;
 

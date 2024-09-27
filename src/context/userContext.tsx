@@ -1,13 +1,23 @@
 import { create } from "zustand";
 
-type MouseStore = {
-  mouseMove: boolean;
-  setMouseMove: (def: MouseStore["mouseMove"]) => void;
+type RankStore = {
+  rank: string[];
+  setRank: (def: RankStore["rank"]) => void;
 };
 
-type CanvasAttributes = MouseStore;
+type UserStore = {
+  user:   {  
+  name?: string;
+  email?: string;
+  id?: number};
+  setUser: (def: UserStore["user"]) => void;
+};
 
-export const useCanvasAttributes = create<CanvasAttributes>()((set) => ({
-  mouseMove: false,
-  setMouseMove: (mouseMove) => set(() => ({mouseMove})),
+type UserContext = RankStore & UserStore;
+
+export const useUserContext = create<UserContext>()((set) => ({
+  rank: [],
+  setRank: (rank) => set(() => ({rank})),
+  user:   {},
+    setUser: (user) => set(() => ({user})),
 }));

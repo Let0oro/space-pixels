@@ -1,29 +1,42 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { FrontFetch } from "../utils/FrontFetch";
 import { Link } from "react-router-dom";
-import Canvas from "../components/PixelStudio/Canvas";
 import PixelStudio from "./PixelStudio";
+import { useUserContext } from "../context/userContext";
 
 const UserMain = () => {
-  const [user, setUser] = useState<{
-    name?: string;
-    email?: string;
-    id?: number;
-  }>({});
+  const { user, setUser, rank, setRank } = useUserContext();
 
-  useEffect(() => {
-    const getUserFromSession = async () => {
-      const { password: undefined, ...response } = await FrontFetch.caller({
-        name: "user",
-        method: "get",
-        typeMethod: "session",
-      });
-      console.log({ response });
-      setUser(response);
-    };
+  if (!user) {
+    useEffect(() => {
+      const getUserFromSession = async () => {
+        const { password: undefined, ...response } = await FrontFetch.caller({
+          name: "user",
+          method: "get",
+          typeMethod: "session",
+        });
+        console.log({ response });
+        setUser(response);
+      };
 
-    getUserFromSession();
-  }, []);
+      getUserFromSession();
+    }, []);
+  }
+
+  if (!rank) {
+    useEffect(() => {
+      const getRanking = async () => {
+        const { password: undefined, ...response } = await FrontFetch.caller({
+          name: "score",
+          method: "get",
+        });
+        console.log({ response });
+        setRank(response);
+      };
+
+      getRanking();
+    }, []);
+  }
 
   const { name } = user;
   return (
@@ -36,6 +49,10 @@ const UserMain = () => {
         <Link to="/settings">Settings</Link>
       </div>
 
+      <Link to="/game">
+        <h3 className="button_play">Play</h3>
+      </Link>
+
       <div
         style={{
           display: "flex",
@@ -45,19 +62,17 @@ const UserMain = () => {
           justifyContent: "center",
         }}
       >
-        <div style={{marginBottom: "2rem"}}>
-          <h4 style={{ margin: 0 }}>Customize your ship</h4>
-          <div
-            style={{ width: "360px", border: "1px solid red" }}
-          >
-            <PixelStudio title={false}  />
-          </div>
-        </div>
         <div>
           <h4 style={{ margin: 0 }}>Give a spot to your ranking</h4>
           <div
             style={{ height: "360px", aspectRatio: 1, border: "1px solid red" }}
           ></div>
+        </div>
+        <div style={{ marginBottom: "1rem" }}>
+          <h4 style={{ margin: 0 }}>Customize your ship</h4>
+          <div style={{ width: "360px", border: "1px solid red" }}>
+            <PixelStudio title={false} />
+          </div>
         </div>
       </div>
     </>
