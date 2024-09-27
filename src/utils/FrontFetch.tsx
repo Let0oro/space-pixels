@@ -1,6 +1,6 @@
 interface parseMethodInterface {
   user: {
-    get: { get: string; isLog?: string; getAll: string };
+    get: { get: string; session: string; getAll: string };
     post: {
       register: string;
       login: string;
@@ -23,15 +23,21 @@ interface parseMethodInterface {
   };
 }
 
-type pMethodType = parseMethodInterface[nameType][methodType];
+type pMethodType = parseMethodInterface[nameType][methodType] | string;
 
 type methodType = "get" | "put" | "post" | "delete";
 type nameType = "user" | "pixel" | "score";
-type postUserType = "register" | "login" | "logout";
+type typeMethodType =
+  | "register"
+  | "login"
+  | "logout"
+  | "get"
+  | "getAll"
+  | "session";
 type routeType = {
   name: nameType;
   method: methodType;
-  postUser?: postUserType;
+  typeMethod?: typeMethodType;
   id?: string;
 };
 type optsType = {
@@ -47,7 +53,7 @@ export class FrontFetch {
 
   static parseMethod: parseMethodInterface = {
     user: {
-      get: { get: "/", getAll: "/" },
+      get: { get: "/one/", getAll: "/all/", session: "/session" },
       post: {
         register: "/",
         login: "/login",
@@ -68,7 +74,7 @@ export class FrontFetch {
       put: "/",
       delete: "/",
     },
-  };
+  } as const;
 
   static async Fetch(url: string, opts = {}) {
     try {
@@ -96,13 +102,11 @@ export class FrontFetch {
     opts: optsType = {}
   ) {
     const { parseMethod }: { parseMethod: parseMethodInterface } = this;
-    const { name, method, postUser, id }: routeType = route;
+    const { name, method, typeMethod, id }: routeType = route;
     const pMethod: pMethodType = parseMethod[name][method];
-    const pMethodPU:
-      | parseMethodInterface["user"]["post"][postUserType]
-      | undefined = postUser
-      ? parseMethod["user"]["post"][postUser]
-      : undefined;
+    const  typePMethod: string | undefined = typeMethod ? (pMethod as any)[typeMethod] : undefined;
+
+    console.log({ typeMethod, id, pMethod });
 
     opts = {
       method: method.toUpperCase(),
@@ -115,12 +119,13 @@ export class FrontFetch {
 
       opts.body = formData;
     }
-    if (name != "user" || method != "get") opts.credentials = "include";
-    // opts.credentials = "include";
+    // if (name != "user" || method != "get") opts.credentials = "include";
+    opts.credentials = "include";
 
     console.log({ opts });
 
-    const url = `${this.baseUrl}${name}${postUser ? pMethodPU : pMethod}${id || ""}`;
+    const url = `${this.baseUrl}${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
+    console.log({ url });
     return await this.Fetch(url, opts);
   }
 }

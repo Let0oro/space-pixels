@@ -9,6 +9,7 @@ import PixelStudio from "./pages/PixelStudio.tsx";
 import Settings from "./pages/Settings.tsx";
 import LogSing from "./pages/LogSign.tsx";
 import Game from "./pages/Game.tsx";
+import UserMain from "./pages/UserMain.tsx";
 
 const router = createBrowserRouter([
   {
@@ -28,20 +29,25 @@ const router = createBrowserRouter([
         path: "/signup",
         element: <LogSing type="register" />
       },
+      {
+        path: "/pixel",
+        element: <PixelStudio  />
+      },
+      {
+        path: "/usermain",
+        element: <UserMain  />,
+      },
+      {
+        path: "/settings",
+        element: <Settings  />
+      },
+      {
+        path: "/game",
+        element: <Game  />
+      },
     ],
   },
-  {
-    path: "/pixel",
-    element: <PixelStudio  />
-  },
-  {
-    path: "/settings",
-    element: <Settings  />
-  },
-  {
-    path: "/game",
-    element: <Game  />
-  },
+ 
 ]);
 
 createRoot(document.getElementById("root")!).render(

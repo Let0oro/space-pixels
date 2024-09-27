@@ -13,9 +13,14 @@ function App() {
     } else setStart(true);
   }, [path]);
 
+  const showLogoLS = ["/login", "/signup", "/main"].includes(path) || path == "/"
+
+  // console.log({path, showLogoLS})
+
   return (
     <>
-      <LogoSL wanted={["logo", "SL"]} />
+      
+      <LogoSL wanted={showLogoLS ? ["logo", "SL"]:  ["logo"]} />
 
       <Outlet />
       {!start && (

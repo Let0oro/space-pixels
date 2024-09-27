@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 interface LogoSLType {
-  wanted: ["logo", "SL"];
+  wanted: string[] | ["logo", "SL"];
 }
 const LogoSL = ({ wanted }: LogoSLType) => {
 
