@@ -58,7 +58,7 @@ const ColorInput = () => {
   );
 
   const clrTranspBlind = useCallback(() => {
-    if (clr.length == 9) setClr(clr.replace(/.{2}$/, clr.slice(-2) == "00" ? "ff" : "00"));
+    if (clr.length == 9) setClr(clr.replace(/.{2}$/, clr.slice(-2) == "00" ? "ff" : "00")); 
   }, [clr]);
 
   return (

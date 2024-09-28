@@ -42,16 +42,34 @@
 }
 
 .button_play {
-  color: #B836BA;
-  margin: .5rem auto;
-  border: 2px solid #B836BA;
+  color: #b836ba;
+  margin: 0.5rem auto;
+  border: 2px solid #b836ba;
   background-color: transparent;
-  transition: background-color .2s, color .2s;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
 }
 
 .button_play:hover {
   background-color: #b836ba;
-  color: #242424
+  color: #242424;
+}
+
+.link_collection {
+  margin: auto 0;
+  border: 1px solid #646cff;
+  padding: 4px 16px;
+  color: #646cff;
+  background-color: transparent;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.link_collection:hover {
+  background-color: #535bf2;
+  color: #242424;
 }
 
 form legend {

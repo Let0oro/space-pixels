@@ -6,10 +6,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./components/ErrorPage.tsx";
 import Entrance from "./components/Entrance/Entrance.tsx";
 import PixelStudio from "./pages/PixelStudio.tsx";
-import Settings from "./pages/Settings.tsx";
 import LogSing from "./pages/LogSign.tsx";
 import Game from "./pages/Game.tsx";
 import UserMain from "./pages/UserMain.tsx";
+import Collection from "./pages/Collection.tsx";
 
 const router = createBrowserRouter([
   {
@@ -38,8 +38,8 @@ const router = createBrowserRouter([
         element: <UserMain  />,
       },
       {
-        path: "/settings",
-        element: <Settings  />
+        path: "/collection",
+        element: <Collection  />
       },
       {
         path: "/game",

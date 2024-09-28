@@ -65,8 +65,8 @@ const UserMain = () => {
         Welcome <span style={{ color: "#535BF2" }}>{name}</span>!
       </h2>
       <div style={{ display: "flex", gap: "2rem", justifyContent: "center" }}>
-        <Link to="">Collection</Link>
-        <Link to="/settings">Settings</Link>
+        <Link to="/collection"><h3 className="link_collection" >Collection</h3></Link>
+        {/* <Link to="/settings">Settings</Link> */}
       </div>
 
       <Link to="/game">
