@@ -81,7 +81,7 @@ export class FrontFetch {
       const response = await fetch(url, { ...opts, mode: "cors" });
       const data = await response.json();
 
-      console.log({ data, opts });
+      // console.log({ data, opts });
 
       if (!response.ok) {
         throw new Error(
@@ -106,8 +106,6 @@ export class FrontFetch {
     const pMethod: pMethodType = parseMethod[name][method];
     const  typePMethod: string | undefined = typeMethod ? (pMethod as any)[typeMethod] : undefined;
 
-    console.log({ typeMethod, id, pMethod });
-
     opts = {
       method: method.toUpperCase(),
       ...opts,
@@ -122,10 +120,9 @@ export class FrontFetch {
     // if (name != "user" || method != "get") opts.credentials = "include";
     opts.credentials = "include";
 
-    console.log({ opts });
 
     const url = `${this.baseUrl}${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
-    console.log({ url });
+    // console.log({ typeMethod, id, pMethod, opts, url });
     return await this.Fetch(url, opts);
   }
 }

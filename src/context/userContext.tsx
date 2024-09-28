@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 type RankStore = {
-  rank: string[];
+  rank: {points: number, username: string}[];
   setRank: (def: RankStore["rank"]) => void;
 };
 

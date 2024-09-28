@@ -2,8 +2,10 @@ import "./App.css";
 import { useMemo, useState } from "react";
 import LogoSL from "./components/LogoSL";
 import { Link, Outlet, useLocation } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
+  const queryClient = new QueryClient();
   const [start, setStart] = useState(false);
   const { pathname: path } = useLocation();
 
@@ -13,21 +15,21 @@ function App() {
     } else setStart(true);
   }, [path]);
 
-  const showLogoLS = ["/login", "/signup", "/main"].includes(path) || path == "/"
-
-  // console.log({path, showLogoLS})
+  const showLogoLS =
+    ["/login", "/signup", "/main"].includes(path) || path == "/";
 
   return (
     <>
-      
-      <LogoSL wanted={showLogoLS ? ["logo", "SL"]:  ["logo"]} />
+      <QueryClientProvider client={queryClient}>
+        <LogoSL wanted={showLogoLS ? ["logo", "SL"] : ["logo"]} />
 
-      <Outlet />
-      {!start && (
-        <button onClick={() => setStart(!start)}>
-          <Link to="/main">Start</Link>
-        </button>
-      )}
+        <Outlet />
+        {!start && (
+          <button onClick={() => setStart(!start)}>
+            <Link to="/main">Start</Link>
+          </button>
+        )}
+      </QueryClientProvider>
     </>
   );
 }

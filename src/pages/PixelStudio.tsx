@@ -4,9 +4,8 @@ import { useCallback, useMemo, useState } from "react";
 import { MuiColorInput } from "mui-color-input";
 import { TinyColor } from "@ctrl/tinycolor";
 import ShowAvatar from "../components/PixelStudio/ShowAvatar";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { FrontFetch } from "../utils/FrontFetch";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const SizeSelector = () => {
   const { size, setSize } = useCanvasAttributes();
@@ -47,6 +46,11 @@ const SizeSelector = () => {
 const ColorInput = () => {
   const { clr, setClr } = useCanvasAttributes();
 
+  useMemo(() => {
+    const tinyClr = new TinyColor(clr);
+    if (tinyClr.format != "hex8") setClr(tinyClr.toHex8String());
+  }, [clr]);
+
   const clrTransp = useCallback(
     (ifIsTransp: string) =>
       clr.length == 9 && clr.slice(-2) == "00" ? ifIsTransp : clr,
@@ -54,8 +58,7 @@ const ColorInput = () => {
   );
 
   const clrTranspBlind = useCallback(() => {
-    if (clr.length == 9)
-      setClr(clr.replace(/.{2}$/, clr.slice(-2) == "00" ? "ff" : "00"));
+    if (clr.length == 9) setClr(clr.replace(/.{2}$/, clr.slice(-2) == "00" ? "ff" : "00"));
   }, [clr]);
 
   return (
@@ -82,10 +85,11 @@ const ColorInput = () => {
   );
 };
 
-const PixelStudio = ({ title }: { title: boolean }) => {
-  const { pxArr, size, clr, setPxArr, setClr } = useCanvasAttributes();
+const PixelStudio = ({ title = true }: { title?: boolean }) => {
+  const { pxArr, size, setPxArr } = useCanvasAttributes();
 
   const navigate = useNavigate();
+  const {pathname: path} = useLocation();
 
   const confirmAvatar = async () => {
     console.clear();
@@ -94,35 +98,30 @@ const PixelStudio = ({ title }: { title: boolean }) => {
       { name: "pixel", method: "post" },
       [data]
     );
-    if (response) navigate("/usermain");
+    if (response && path == "/pixel") navigate("/usermain");
   };
 
-  const queryClient = new QueryClient();
-
   useMemo(() => {
-    const tinyClr = new TinyColor(clr);
-    if (tinyClr.format != "hex") setClr(tinyClr.toHex8String());
-  }, [clr]);
-
-  useMemo(() => {
-    setPxArr(Array(size).fill(Array(size).fill("#0000")));
+    if (pxArr.length != size) setPxArr(Array(size).fill(Array(size).fill("#0000")));
   }, [size]);
 
   return (
-    <QueryClientProvider client={queryClient}>
       <div style={{display: "flex", flexDirection: "column", gap: "1rem"}}>
         {title && <h2>Create your hero</h2>}
-        <label
-          style={{
-            display: "flex",
-            alignItems: "stretch",
-            height: "min-content",
-            marginBottom: "1rem",
-          }}
+        {title && <label
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: ".5rem",
+          alignItems: "stretch",
+          height: "min-content",
+          marginBottom: "1rem",
+        }}
         >
-          {title && <SizeSelector />}
-          {title && <ColorInput />}
+          <SizeSelector />
+          <ColorInput />
         </label>
+        }
         <Canvas />
         {title || <ColorInput />}
         {title || <SizeSelector />}
@@ -131,7 +130,6 @@ const PixelStudio = ({ title }: { title: boolean }) => {
           <button onClick={confirmAvatar}>Confirm avatar</button>
         </div>
       </div>
-    </QueryClientProvider>
   );
 };
 

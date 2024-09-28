@@ -4,39 +4,59 @@ import { Link } from "react-router-dom";
 import PixelStudio from "./PixelStudio";
 import { useUserContext } from "../context/userContext";
 
+const RankElement = ({
+  currUser,
+  rank,
+}: {
+  currUser?: string,
+  rank: { username: string; points: number }[];
+}) => {
+  if (!rank) return <h4>Loading points...</h4>;
+  if (!rank.length) {
+    return (
+      <h4>Not players registered yet or you dont have played any match</h4>
+    );
+  } else {
+    return (
+      <>
+        {rank.sort(({points: pointsA}, {points: pointsB}) => pointsB - pointsA).map(({ username, points }) => (
+          <p key={username}  style={{borderBottom: "1px solid red", margin: 0, padding: ".5rem 0"}}>
+            <span style={{color: currUser === username ?  "#B836BA" : "#535BF2" }}>{username}:</span>
+            <span> {points}</span>
+          </p>
+        ))}
+      </>
+    );
+  }
+};
+
 const UserMain = () => {
   const { user, setUser, rank, setRank } = useUserContext();
 
-  if (!user) {
-    useEffect(() => {
-      const getUserFromSession = async () => {
-        const { password: undefined, ...response } = await FrontFetch.caller({
-          name: "user",
-          method: "get",
-          typeMethod: "session",
-        });
-        console.log({ response });
-        setUser(response);
-      };
+  useEffect(() => {
+    const getUserFromSession = async () => {
+      const { password: undefined, ...response } = await FrontFetch.caller({
+        name: "user",
+        method: "get",
+        typeMethod: "session",
+      });
+      setUser(response);
+    };
+    if (!user.id) getUserFromSession();
+  }, []);
 
-      getUserFromSession();
-    }, []);
-  }
-
-  if (!rank) {
-    useEffect(() => {
-      const getRanking = async () => {
-        const { password: undefined, ...response } = await FrontFetch.caller({
-          name: "score",
-          method: "get",
-        });
-        console.log({ response });
-        setRank(response);
-      };
-
-      getRanking();
-    }, []);
-  }
+  useEffect(() => {
+    const getRanking = async () => {
+      const { password: undefined, ...response } = await FrontFetch.caller({
+        name: "score",
+        method: "get",
+        typeMethod: "get",
+      });
+      setRank(Object.values(response));
+    };
+    if (!rank.length) getRanking();
+  }, []);
+  
 
   const { name } = user;
   return (
@@ -66,11 +86,13 @@ const UserMain = () => {
           <h4 style={{ margin: 0 }}>Give a spot to your ranking</h4>
           <div
             style={{ height: "360px", aspectRatio: 1, border: "1px solid red" }}
-          ></div>
+          >
+            <RankElement currUser={name} rank={rank} />
+          </div>
         </div>
         <div style={{ marginBottom: "1rem" }}>
           <h4 style={{ margin: 0 }}>Customize your ship</h4>
-          <div style={{ width: "360px", border: "1px solid red" }}>
+          <div style={{ width: "360px" }}>
             <PixelStudio title={false} />
           </div>
         </div>
