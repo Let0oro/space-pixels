@@ -9,7 +9,7 @@ import PixelStudio from "./pages/PixelStudio.tsx";
 import LogSing from "./pages/LogSign.tsx";
 import Game from "./pages/Game.tsx";
 import UserMain from "./pages/UserMain.tsx";
-import Collection from "./pages/Collection.tsx";
+import Shop from "./pages/Shop.tsx";
 
 const router = createBrowserRouter([
   {
@@ -22,27 +22,27 @@ const router = createBrowserRouter([
         element: <Entrance />,
       },
       {
-        path: "/login",
+        path: "login",
         element: <LogSing type="login" />
       },
       {
-        path: "/signup",
+        path: "signup",
         element: <LogSing type="register" />
       },
       {
-        path: "/pixel",
+        path: "pixel",
         element: <PixelStudio  />
       },
       {
-        path: "/usermain",
+        path: "usermain",
         element: <UserMain  />,
       },
       {
-        path: "/collection",
-        element: <Collection  />
+        path: "shop",
+        element: <Shop  />
       },
       {
-        path: "/game",
+        path: "game",
         element: <Game  />
       },
     ],

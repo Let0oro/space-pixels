@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useState } from "react";
 import { useCanvasAttributes } from "../../context/pixelContext";
 
 interface PixelProps {
@@ -8,8 +8,7 @@ interface PixelProps {
 
 const Pixel = memo(({ icol, irow }: PixelProps) => {
   const { setMouseMove, pxArr, size, clr, setPxArr } = useCanvasAttributes(
-    ({ bckColor, setMouseMove, pxArr, size, clr, setPxArr }) => ({
-      bckColor,
+    ({  setMouseMove, pxArr, size, clr, setPxArr }) => ({
       setMouseMove,
       pxArr,
       size,

@@ -1,6 +1,6 @@
 import Canvas from "../components/PixelStudio/Canvas";
 import { useCanvasAttributes } from "../context/pixelContext";
-import { useCallback, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
 import { MuiColorInput } from "mui-color-input";
 import { TinyColor } from "@ctrl/tinycolor";
 import ShowAvatar from "../components/PixelStudio/ShowAvatar";
@@ -85,7 +85,7 @@ const ColorInput = () => {
   );
 };
 
-const PixelStudio = ({ title = true }: { title?: boolean }) => {
+const PixelStudio = ({ title = true, setNewShip }: { title?: boolean, setNewShip?: Dispatch<SetStateAction<boolean>> }) => {
   const { pxArr, size, setPxArr } = useCanvasAttributes();
 
   const navigate = useNavigate();
@@ -95,10 +95,13 @@ const PixelStudio = ({ title = true }: { title?: boolean }) => {
     console.clear();
     const data = pxArr.flat(1);
     const response = await FrontFetch.caller(
-      { name: "pixel", method: "post" },
+      { name: "ship", method: "post", typeMethod: "painted" },
       [data]
     );
-    if (response && path == "/pixel") navigate("/usermain");
+    if (response) {
+      if (path == "/pixel") {navigate("/usermain")} else {setNewShip && setNewShip(bfr => !bfr)};
+      setPxArr(Array(size).fill(Array(size).fill("#0000")))
+    }
   };
 
   useMemo(() => {

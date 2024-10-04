@@ -1,19 +1,29 @@
 interface parseMethodInterface {
-  user: {
+  player: {
     get: { get: string; session: string; getAll: string };
     post: {
       register: string;
       login: string;
       logout: string;
     };
-    put: string;
+    put: {
+      select: string;
+      password: string;
+    };
     delete: string;
   };
-  pixel: {
-    get: { get: string; getAll: string };
-    post: string;
+  ship: {
+    get: {
+      get: string;
+      getAll: string;
+      public: string;
+      liked: string;
+      publicplayer: string;
+      likedplayer: string;
+    };
+    post: { painted: string; liked: string, post: string };
     put: string;
-    delete: string;
+    delete: {one: string, post: string};
   };
   score: {
     get: { get: string; getAll: string };
@@ -26,14 +36,21 @@ interface parseMethodInterface {
 type pMethodType = parseMethodInterface[nameType][methodType] | string;
 
 type methodType = "get" | "put" | "post" | "delete";
-type nameType = "user" | "pixel" | "score";
+type nameType = "player" | "ship" | "score";
 type typeMethodType =
   | "register"
   | "login"
   | "logout"
   | "get"
   | "getAll"
-  | "session";
+  | "session"
+  | "select"
+  | "password"
+  | "painted"
+  | "liked"
+  | "public"
+  | "likedplayer"
+  | "publicplayer" | "post" | "one";
 type routeType = {
   name: nameType;
   method: methodType;
@@ -52,21 +69,31 @@ export class FrontFetch {
   static baseUrl = "http://localhost:3000/api/";
 
   static parseMethod: parseMethodInterface = {
-    user: {
+    player: {
       get: { get: "/one/", getAll: "/all/", session: "/session" },
       post: {
         register: "/",
         login: "/login",
         logout: "/logout",
       },
-      put: "/",
+      put: {
+        select: "/select/",
+        password: "/password/",
+      },
       delete: "/",
     },
-    pixel: {
-      get: { get: "/", getAll: "/" },
-      post: "/",
+    ship: {
+      get: {
+        get: "/one/",
+        getAll: "/all/",
+        public: "/public/",
+        liked: "/liked/",
+        publicplayer: "public/player",
+        likedplayer: "liked/player",
+      },
+      post: { painted: "/painted/", liked: "/liked/", post: "/post/" },
       put: "/",
-      delete: "/",
+      delete: {one: "/", post: "/post/"},
     },
     score: {
       get: { get: "/", getAll: "/" },
@@ -81,17 +108,26 @@ export class FrontFetch {
       const response = await fetch(url, { ...opts, mode: "cors" });
       const data = await response.json();
 
-      // console.log({ data, opts });
+      console.log({ data, opts });
 
       if (!response.ok) {
+        if (
+          [
+            "session expired",
+            "Player already exists with this name or email, try with other",
+          ].includes(data.message)
+        ) {
+          return data;
+        }
         throw new Error(
           data.message || data.statusText || "Error en la solicitud"
         );
+        // return {error: data.message || data.statusText || "Error en la solicitud"};
       }
 
       return data;
     } catch (error) {
-      console.error("Fetch error: " + error);
+      // console.error("Fetch error: " + error);
       throw error;
     }
   }
@@ -104,7 +140,9 @@ export class FrontFetch {
     const { parseMethod }: { parseMethod: parseMethodInterface } = this;
     const { name, method, typeMethod, id }: routeType = route;
     const pMethod: pMethodType = parseMethod[name][method];
-    const  typePMethod: string | undefined = typeMethod ? (pMethod as any)[typeMethod] : undefined;
+    const typePMethod: string | undefined = typeMethod
+      ? (pMethod as any)[typeMethod]
+      : undefined;
 
     opts = {
       method: method.toUpperCase(),
@@ -120,9 +158,8 @@ export class FrontFetch {
     // if (name != "user" || method != "get") opts.credentials = "include";
     opts.credentials = "include";
 
-
     const url = `${this.baseUrl}${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
-    // console.log({ typeMethod, id, pMethod, opts, url });
+    console.log({ typeMethod, id, pMethod, opts, url });
     return await this.Fetch(url, opts);
   }
 }
