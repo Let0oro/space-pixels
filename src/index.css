@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Tiny5&display=swap");
 
+
 :root {
   font-family: "Tiny5", sans-serif;
   font-weight: 500;
@@ -7,6 +8,8 @@
   line-height: 1.5;
   font-size: 1.1rem;
   box-sizing: border-box;
+  max-width: 780px;
+  margin: 0 auto; 
   
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
@@ -36,13 +39,6 @@ a:hover {
   color: #535bf2;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
 
 h1 {
   font-size: 3.2em;

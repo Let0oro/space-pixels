@@ -5,6 +5,7 @@ import PixelStudio from "./PixelStudio";
 import { useUserContext } from "../context/userContext";
 import Dialog from "../components/Dialog";
 import { useDialogContext } from "../context/dialogContext";
+import shadowPixel from "../utils/shadowPixel";
 
 const RankElement = memo(
   ({
@@ -25,7 +26,7 @@ const RankElement = memo(
           style={{
             height: "360px",
             aspectRatio: 1,
-            border: "1px solid red",
+            border: "1px solid #b836ba",
             overflowY: "scroll",
             scrollbarWidth: "thin",
           }}
@@ -38,7 +39,7 @@ const RankElement = memo(
               <p
                 key={ix}
                 style={{
-                  borderBottom: "1px solid red",
+                  borderBottom: "1px solid #b836ba",
                   margin: 0,
                   padding: ".5rem 0",
                 }}
@@ -146,7 +147,7 @@ const ShipsList = memo(
             margin: "0 auto",
             gap: "8px",
             height: "45px",
-            maxWidth: "200px",
+            maxWidth: "180px",
             minWidth: "content",
             overflow: "auto hidden",
             scrollbarWidth: "thin",
@@ -154,22 +155,8 @@ const ShipsList = memo(
           }}
         >
           {ships.map(({ pixels, ship_id, store_id, from_other_id }) => {
-            const secArr = pixels[0].split(/,\s?/gi);
-            
-            const boxShadow = [];
-            const pxLen = secArr.length;
-            const origsize = Math.sqrt(pxLen);
-            const varS = 32 / origsize;
 
-            for (let i = 0; i < pxLen; i++) {
-              const lineShadowRet = [];
-              const currRow = secArr[i];
-              const ix = i % origsize;
-              lineShadowRet.push(
-                `${varS * ix}px ${varS * Math.floor(i / origsize)}px 0 ${currRow.replace(/'/gi, "")}`
-              );
-              boxShadow.push(lineShadowRet.join(", "));
-            }
+            const boxShadow = shadowPixel(pixels);
             return (
               <div
                 className="ship"
@@ -193,7 +180,7 @@ const ShipsList = memo(
                   style={{
                     height: "4px",
                     width: "4px",
-                    boxShadow: boxShadow.join(", "),
+                    boxShadow: boxShadow,
                   }}
                 ></div>
               </div>
@@ -208,6 +195,7 @@ const ShipsList = memo(
 
 const UserMain = () => {
   const { user, setUser, rank, setRank, ships, setShips } = useUserContext();
+  const {element} = useDialogContext();
 
   const [newShip, setNewShip] = useState<boolean>(false);
 
@@ -251,7 +239,7 @@ const UserMain = () => {
       setShips(response);
     };
     if (user.id) getShipsUser();
-  }, [user?.name, ships?.length, newShip]);
+  }, [user?.name, ships.length, newShip, element?.open]);
 
   const { name, active_ship_id } = user;
   // console.log({ active_ship_id });
@@ -263,7 +251,7 @@ const UserMain = () => {
       </h2>
       <h4>Your ships collection</h4>
       <ShipsList ships={ships} player_selected={active_ship_id || 1} />
-      <p>
+      <p style={{display: "flex", gap: "4px", flexWrap: "wrap", justifyContent: "center", alignItems: "center", fontSize: "clamp(.9rem, 2.5lvw, 1rem)" }}>
         Legend:{" "}
         <span style={{ backgroundColor: "green", padding: "4px 2px" }}>
           Published
@@ -282,15 +270,15 @@ const UserMain = () => {
         <Link to="/settings">Settings</Link>
       </div> */}
 
-      <Link to="/game">
-        <h3 className="button_play">Play</h3>
+      <Link to="/game" style={{display: "block", width: "100%"}}>
+        <h3  className="button_play">Play</h3>
       </Link>
 
       <div
         style={{
           display: "flex",
           flexWrap: "wrap",
-          width: "450px",
+          maxWidth: "780px",
           gap: "2rem",
           justifyContent: "center",
         }}

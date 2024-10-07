@@ -6,7 +6,6 @@ const LogoSL = () => {
   const { setUser } = useUserContext();
 
   const { pathname: path } = useLocation();
-  // console.log({ path });
   const newTo = ["/main", "/signup", "/pixel", "/login", "/"].includes(path)
     ? "/"
     : "usermain";
@@ -20,19 +19,23 @@ const LogoSL = () => {
     </div>
   );
 
+  const handleLogout = async () => {
+    await FrontFetch.caller({
+      name: "player",
+      method: "post",
+      typeMethod: "logout",
+    });
+  };
+
   const logoutDiv = (
     <div style={{ ...styles.logRegDiv, position: "absolute" }}>
       <button
-        onClick={async () => {
+        onClick={() => {
           setUser({});
-          await FrontFetch.caller({
-            name: "player",
-            method: "post",
-            typeMethod: "logout",
-          });
+          handleLogout();
         }}
       >
-        <Link to="/signup">Logout</Link>
+        <Link to="/">Logout</Link>
       </button>
     </div>
   );

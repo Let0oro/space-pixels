@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { FrontFetch } from "../../utils/FrontFetch";
 import { useUserContext } from "../../context/userContext";
 import { useDialogContext } from "../../context/dialogContext";
@@ -84,7 +84,7 @@ const CardShip = ({
         padding: "4px 8px",
         width: "180px",
         height: "150px",
-        border: "1px solid",
+        border: `1px solid ${user.id == player_id ? "#b836ba" : ""}`,
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-around",
@@ -112,7 +112,8 @@ const CardShip = ({
           }}
         ></div>
       </div>
-      <div
+
+      {user.id != player_id && <div
         style={{
           width: "100%",
           display: "flex",
@@ -139,7 +140,7 @@ const CardShip = ({
         >
           ❤
         </button>
-      </div>
+      </div>}
       {!isProfileScreen && <button onClick={() => showUserInfo(player_id)}>{name}</button>}
     </div>
   );

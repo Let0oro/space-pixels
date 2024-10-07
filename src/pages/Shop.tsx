@@ -22,7 +22,7 @@ const ShipsList = memo(
     player_selected?: number;
   }) => {
 
-    const {likes, setLikes} = useUserContext();
+    const {setLikes} = useUserContext();
     const {element} = useDialogContext();
 
     useEffect(() => {
@@ -58,6 +58,8 @@ const ShipsList = memo(
             {ships.sort(({store_id: a}, {store_id: b}) => a && b ? (a - b) : 0).map(({ pixels, ship_id, name, player_id, store_id, price }) => {
 
               const boxShadow = shadowPixel(pixels);
+              if (store_id && store_id == 1) console.log({cpu: "cpu", pixels, boxShadow});
+              if (store_id && store_id> 100) console.log({me: "me", pixels, boxShadow});
               return (
                 <CardShip
                   key={ship_id}
@@ -118,7 +120,7 @@ const Shop = () => {
     <div>
       <Dialog  />
       <h3 style={{ position: "fixed", right: "1rem", bottom: 0 }}>
-        coins: {user.coins}
+        coins: <span style={{color:"greenyellow"}}>{user.coins}</span>
       </h3>
       <h2>Shop</h2>
       <div>

@@ -9,17 +9,18 @@ const UserProfile = memo(() => {
   const { otherUserId, type, element } = useDialogContext();
   const { user, setUser } = useUserContext();
   const [shipsProf, setShipsProf] = useState<
-    {
-      name: string;
-      id: number;
-      pixels: string[];
-      store_id: number;
-      ship_id: number;
-      price: number;
-      following_id: number[];
-    }[] | null
+    | {
+        name: string;
+        id: number;
+        pixels: string[];
+        store_id: number;
+        ship_id: number;
+        price: number;
+        following_id: number[];
+      }[]
+    | null
   >();
-  const {likes, setLikes} = useUserContext();
+  const { setLikes } = useUserContext();
   const [isCurrentFollowing, setIsCurrentFollowing] = useState<boolean>(false);
 
   useEffect(() => {
@@ -79,54 +80,56 @@ const UserProfile = memo(() => {
     }
   };
 
-  if (shipsProf && shipsProf[0].id != otherUserId || !shipsProf) {
-    return <h3>Loading player...</h3>
+  if ((shipsProf && shipsProf[0].id != otherUserId) || !shipsProf) {
+    return <h3>Loading player...</h3>;
   }
 
-  if (shipsProf && shipsProf[0].id == otherUserId) return (
-    <div style={{ marginBottom: "1rem" }}>
-      <h2
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-evenly",
-        }}
-      >
-        {shipsProf && shipsProf[0].name}{" "}
-        <button style={{ fontSize: ".8rem" }} onClick={followOrNot}  >
-          {isCurrentFollowing ? "Unfollow" : "Follow"}
-        </button>
-      </h2>
-      {shipsProf &&
-        shipsProf.map(
-          ({ pixels, ship_id, name, id: player_id, store_id, price }) => {
-            const boxShadow = shadowPixel(pixels);
-            return (
-              <CardShip
-                key={ship_id}
-                store_id={store_id}
-                name={name}
-                ship_id={ship_id}
-                player_id={player_id}
-                boxShadow={boxShadow}
-                price={price}
-                isProfileScreen={true}
-              />
-            );
-          }
-        )}
-    </div>
-  );
+  if (shipsProf && shipsProf[0].id == otherUserId)
+    return (
+      <div style={{ marginBottom: "1rem" }}>
+        <h2
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-evenly",
+          }}
+        >
+          {shipsProf && user.name == shipsProf[0].name ? "You!" : shipsProf[0].name}{" "}
+          {shipsProf && user.name != shipsProf[0].name  && <button style={{ fontSize: ".8rem" }} onClick={followOrNot}>
+            {isCurrentFollowing ? "Unfollow" : "Follow"}
+          </button>}
+        </h2>
+        {shipsProf &&
+          shipsProf.map(
+            ({ pixels, ship_id, name, id: player_id, store_id, price }) => {
+              const boxShadow = shadowPixel(pixels);
+              return (
+                <CardShip
+                  key={ship_id}
+                  store_id={store_id}
+                  name={name}
+                  ship_id={ship_id}
+                  player_id={player_id}
+                  boxShadow={boxShadow}
+                  price={price}
+                  isProfileScreen={true}
+                />
+              );
+            }
+          )}
+      </div>
+    );
 });
 
 const PublicShip = () => {
   const {
-    shipInfo: { store_id, ship_id },
+    shipInfo: { store_id, ship_id }, element
   } = useDialogContext();
   const { ships, setShips } = useUserContext();
+  const [price, setPrice] = useState(20);
 
-  const publish = async (newPrice: number) => {
-    console.log({ store_id });
+  const publish = async () => {
+    console.log({store_id});
     const response = await FrontFetch.caller(
       {
         name: "ship",
@@ -134,8 +137,10 @@ const PublicShip = () => {
         typeMethod: "post",
         id: `${store_id ? store_id : ship_id}`,
       },
-      { newPrice }
+      { new_price: price }
     );
+
+    console.log({responsePublishorNot: response});
 
     if (response) {
       const changedShip = ships.find((ship) => ship.ship_id == ship_id);
@@ -150,10 +155,36 @@ const PublicShip = () => {
       const newShips = [...ships];
       if (changedShip) newShips.splice(changedShipNo, 1, changedShip);
       setShips(newShips);
+      element && element.close()
     }
   };
 
-  return <></>;
+  return (
+    <>
+      <h2>Publish your ship</h2>
+      <fieldset>
+        Set the public price of your ship:{" "}
+        <input
+          min={20}
+          max={40}
+          step={5}
+          inputMode="numeric"
+          type="number"
+          value={price}
+          onChange={(e): void => {
+            const value = Number((e.target as HTMLInputElement).value);
+            setPrice(value);
+          }}
+        />
+        <p style={{ color: "GrayText" }}>
+          We suggest a correct price to 20 coins for 8x8 ships and 40 for
+          32x32px{" "}
+        </p>
+        {(price < 20 || price > 40) && <p style={{color:"red"}} >The price must be between 20 and 40 coins</p>}
+      </fieldset>
+      <button disabled={price < 20 || price > 40}  style={{marginRight: ".4rem"}} onClick={() => publish()} >{store_id == null ? "Publish" : "Unpublish"}</button>
+    </>
+  );
 };
 
 const Dialog = () => {

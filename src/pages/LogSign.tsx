@@ -108,7 +108,7 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
       }
     };
     if (!user.id && type == "register") getUserFromSession();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     console.log(message);

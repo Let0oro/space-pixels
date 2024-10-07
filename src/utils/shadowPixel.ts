@@ -1,9 +1,11 @@
 const shadowPixel = (pixels: string[]) => {
   const boxShadow = [];
+  if (pixels.length == 1) pixels = pixels[0].split(/,\s?/gi);  
   const pxLen = pixels.length;
   const origsize = Math.sqrt(pxLen);
   const varS = 32 / origsize;
 
+  
   for (let i = 0; i < pxLen; i++) {
     const lineShadowRet = [];
     const currRow = pixels[i];
