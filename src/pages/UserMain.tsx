@@ -3,6 +3,8 @@ import { FrontFetch } from "../utils/FrontFetch";
 import { Link, useNavigate } from "react-router-dom";
 import PixelStudio from "./PixelStudio";
 import { useUserContext } from "../context/userContext";
+import Dialog from "../components/Dialog";
+import { useDialogContext } from "../context/dialogContext";
 
 const RankElement = memo(
   ({
@@ -67,10 +69,12 @@ const ShipsList = memo(
       player_id: number;
       ship_id: number;
       store_id?: null | number;
+      from_other_id?: null | number;
     }[];
     player_selected: number;
   }) => {
     const { setUser, user, setShips } = useUserContext();
+    const {element, setShipInfo, setType} = useDialogContext();
     const [publicMode, setPublicMode] = useState<boolean>(false);
 
     const deleteSelected = async () => {
@@ -106,31 +110,11 @@ const ShipsList = memo(
       }
     };
 
-    const publicSelect = async (ship_id: number, store_id?: number | null) => {
-      console.log({ store_id });
-      const response = await FrontFetch.caller({
-        name: "ship",
-        method: store_id ? "delete" : "post",
-        typeMethod: "post",
-        id: `${store_id ? store_id : ship_id}`,
-      });
-
-      if (response) {
-        const changedShip = ships.find((ship) => ship.ship_id == ship_id);
-
-        const changedShipNo = ships.findIndex(
-          (ship) => ship.ship_id == ship_id
-        );
-
-        if (response?.n_store_id && changedShip) {
-          changedShip.store_id = response.n_store_id;
-        } else {
-          if (changedShip) changedShip.store_id = null;
-        }
-        const newShips = [...ships];
-        if (changedShip) newShips.splice(changedShipNo, 1, changedShip);
-        setShips(newShips);
-      }
+    const publicSelect = async (ship_id: number, store_id?: number | null, from_other_id?: number | null) => {
+      if (from_other_id != null) return;
+      setShipInfo({ship_id, store_id});
+      setType("public");
+      element?.showModal();
     };
 
     const changeSelected = async (ship_id: number) => {
@@ -145,10 +129,6 @@ const ShipsList = memo(
       );
       if (response) setUser({ ...user, active_ship_id: ship_id });
     };
-
-    useEffect(() => {
-      console.log("ships changed");
-    }, [setShips]);
 
     return (
       <div style={{ display: "flex", gap: ".4rem" }}>
@@ -173,10 +153,9 @@ const ShipsList = memo(
             // border: "1px solid red",
           }}
         >
-          {ships.map(({ pixels, ship_id, store_id }) => {
-            // console.log({ pixels });
-            const secArr = pixels[0].split(", ");
-
+          {ships.map(({ pixels, ship_id, store_id, from_other_id }) => {
+            const secArr = pixels[0].split(/,\s?/gi);
+            
             const boxShadow = [];
             const pxLen = secArr.length;
             const origsize = Math.sqrt(pxLen);
@@ -198,7 +177,7 @@ const ShipsList = memo(
                 onClick={() =>
                   publicMode
                     ? store_id
-                      ? publicSelect(ship_id, store_id)
+                      ? publicSelect(ship_id, store_id, from_other_id)
                       : publicSelect(ship_id)
                     : changeSelected(ship_id)
                 }
@@ -278,6 +257,7 @@ const UserMain = () => {
   // console.log({ active_ship_id });
   return (
     <>
+    <Dialog  />
       <h2>
         Welcome <span style={{ color: "#535BF2" }}>{name}</span>!
       </h2>

@@ -93,10 +93,10 @@ const PixelStudio = ({ title = true, setNewShip }: { title?: boolean, setNewShip
 
   const confirmAvatar = async () => {
     console.clear();
-    const data = pxArr.flat(1);
+    const secuence = pxArr.flat(1);
     const response = await FrontFetch.caller(
       { name: "ship", method: "post", typeMethod: "painted" },
-      [data]
+      {secuence}
     );
     if (response) {
       if (path == "/pixel") {navigate("/usermain")} else {setNewShip && setNewShip(bfr => !bfr)};

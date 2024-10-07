@@ -9,6 +9,8 @@ interface parseMethodInterface {
     put: {
       select: string;
       password: string;
+      follow: string;
+      unfollow: string;
     };
     delete: string;
   };
@@ -21,9 +23,9 @@ interface parseMethodInterface {
       publicplayer: string;
       likedplayer: string;
     };
-    post: { painted: string; liked: string, post: string };
+    post: { painted: string; post: string; like: string; purchase: string };
     put: string;
-    delete: {one: string, post: string};
+    delete: {one: string; post: string, like: string;}
   };
   score: {
     get: { get: string; getAll: string };
@@ -50,7 +52,7 @@ type typeMethodType =
   | "liked"
   | "public"
   | "likedplayer"
-  | "publicplayer" | "post" | "one";
+  | "publicplayer" | "post" | "one" | "like" | "purchase" | "follow" | "unfollow";
 type routeType = {
   name: nameType;
   method: methodType;
@@ -79,6 +81,8 @@ export class FrontFetch {
       put: {
         select: "/select/",
         password: "/password/",
+        follow: "/follow/",
+        unfollow: "/unfollow/",
       },
       delete: "/",
     },
@@ -88,12 +92,12 @@ export class FrontFetch {
         getAll: "/all/",
         public: "/public/",
         liked: "/liked/",
-        publicplayer: "public/player",
-        likedplayer: "liked/player",
+        publicplayer: "/public/player/",
+        likedplayer: "/liked/player/",
       },
-      post: { painted: "/painted/", liked: "/liked/", post: "/post/" },
+      post: { painted: "/painted/", purchase: "/purchase/", like: "/like/",  post: "/post/" },
       put: "/",
-      delete: {one: "/", post: "/post/"},
+      delete: {one: "/", post: "/post/", like: "/like/"},
     },
     score: {
       get: { get: "/", getAll: "/" },
