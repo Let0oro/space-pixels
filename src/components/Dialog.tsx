@@ -129,7 +129,6 @@ const PublicShip = () => {
   const [price, setPrice] = useState(20);
 
   const publish = async () => {
-    console.log({store_id});
     const response = await FrontFetch.caller(
       {
         name: "ship",
@@ -139,8 +138,6 @@ const PublicShip = () => {
       },
       { new_price: price }
     );
-
-    console.log({responsePublishorNot: response});
 
     if (response) {
       const changedShip = ships.find((ship) => ship.ship_id == ship_id);

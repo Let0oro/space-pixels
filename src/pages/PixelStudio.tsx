@@ -16,7 +16,6 @@ const SizeSelector = () => {
     <div style={{display: "flex", flexDirection: "row", gap: "0", justifyContent: "center"}}>
       <select
         className="number_selector"
-        style={styles.numberSelector}
         value={currentSize}
         onChange={(e) => setCurrentSize(Number(e.target.value))}
       >
@@ -69,7 +68,6 @@ const ColorInput = () => {
         className="color-input"
         style={{
           border: `1px solid ${clrTransp("#ffffffff")}`,
-          // borderRadius: "8px",
           borderColor: clrTransp("#ffffffff"),
           color: clrTransp("#ffffffff"),
         }}
@@ -137,10 +135,6 @@ const PixelStudio = ({ title = true, setNewShip }: { title?: boolean, setNewShip
 };
 
 const styles = {
-  numberSelector: {
-    // borderBottomLeftRadius: "8px",
-    // borderTopLeftRadius: "8px",
-  },
   buttonNumber: {
     borderBottomLeftRadius: 0,
     borderTopLeftRadius: 0,

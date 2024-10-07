@@ -27,13 +27,11 @@ const CardShip = ({
   const {element, setOtherUserId, setType} = useDialogContext()
 
   const addLike = async () => {
-    console.log({player_id});
     const response = await FrontFetch.caller(
       { name: "ship", method: "post", typeMethod: "like", id: `${player_id}` },
       {store_id}
     );
 
-    console.log({response});
 
     if (response) {
       const newLikes = await FrontFetch.caller({
@@ -57,7 +55,6 @@ const CardShip = ({
     );
 
     if (response) {
-      console.log({responsePurchase: response});
       setUser({...user, coins: ((user.coins != undefined && price) ? user.coins - price : 0)});
       setIsPurchased(true);
     }
@@ -71,7 +68,6 @@ const CardShip = ({
   }
 
   const storesIdLiked = likes?.map((v) => v.store_id);
-  // console.log({storesIdLiked});
   const isLikedFromMe: boolean =
     storesIdLiked && store_id ? storesIdLiked?.includes(store_id) : false;
 

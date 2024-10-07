@@ -32,7 +32,6 @@ const ShipsList = memo(
           method: "get",
           typeMethod: "likedplayer",
         });
-        console.log({ responseLikes: response });
         if (response) setLikes(response);
       };
       getLikesPlayer();
@@ -52,14 +51,12 @@ const ShipsList = memo(
               flexWrap: "wrap",
               maxWidth: "420px",
               minWidth: "content",
-              // border: "1px solid red",
             }}
           >
             {ships.sort(({store_id: a}, {store_id: b}) => a && b ? (a - b) : 0).map(({ pixels, ship_id, name, player_id, store_id, price }) => {
 
               const boxShadow = shadowPixel(pixels);
-              if (store_id && store_id == 1) console.log({cpu: "cpu", pixels, boxShadow});
-              if (store_id && store_id> 100) console.log({me: "me", pixels, boxShadow});
+
               return (
                 <CardShip
                   key={ship_id}
@@ -82,12 +79,7 @@ const Shop = () => {
   const { user, setUser } = useUserContext();
   const [publicShips, setPublicShips] = useState();
   const navigate = useNavigate();
-  /*
-  Descripción: 
-  Cada jugador podrá ganar monedas según la puntuación que consiga jugando (p.e: 100p = 1coin)
-  Cada jugador podrá poner en la tienda sus propias naves dibujadas a un precio entre 10 y 40 según su calidad
-  Cada jugador podrá comprar naves (no muy caro porque podrían no usar el mercado)
-  */
+
   useEffect(() => {
     const getUserFromSession = async () => {
       const { password: undefined, ...response } = await FrontFetch.caller({
@@ -110,11 +102,9 @@ const Shop = () => {
         typeMethod: "public",
       });
       setPublicShips(response);
-      // console.log(response);
     };
     if (!publicShips) getPublicShips();
   }, []);
-  // console.log(user);
 
   return (
     <div>

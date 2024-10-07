@@ -83,7 +83,6 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
       { name: "player", method: "post", typeMethod: type },
       data
     );
-    console.log({ response });
     setMessage(response.message);
     if (
       ![
@@ -111,7 +110,6 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
   }, [user]);
 
   useEffect(() => {
-    console.log(message);
   }, [message]);
 
   if (type == "login")

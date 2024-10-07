@@ -79,26 +79,18 @@ const ShipsList = memo(
     const [publicMode, setPublicMode] = useState<boolean>(false);
 
     const deleteSelected = async () => {
-      console.log("SADFADSFDFFDS");
       const response = await FrontFetch.caller({
         name: "ship",
         method: "delete",
         typeMethod: "one",
         id: String(user.active_ship_id),
       });
-      console.log("deleteSelected");
 
-      console.log({ response });
-
-      console.log(
-        ">>>>>>",
-        ships.find((ship) => ship.ship_id == user.active_ship_id)
-      );
       if (response) {
         setShips(
           ships.filter(({ ship_id: idDel }) => idDel != user.active_ship_id)
         );
-        const response = await FrontFetch.caller(
+        await FrontFetch.caller(
           {
             name: "player",
             method: "put",
@@ -107,7 +99,6 @@ const ShipsList = memo(
           },
           { n_selected: null }
         );
-        console.log({ response });
       }
     };
 
@@ -142,7 +133,6 @@ const ShipsList = memo(
           style={{
             display: "flex",
             padding: "0 4px",
-            // backgroundImage: "linear-gradient( to right, transparent 0%, red 50%, transparent 100%)",
             alignItems: "center",
             margin: "0 auto",
             gap: "8px",
@@ -151,7 +141,6 @@ const ShipsList = memo(
             minWidth: "content",
             overflow: "auto hidden",
             scrollbarWidth: "thin",
-            // border: "1px solid red",
           }}
         >
           {ships.map(({ pixels, ship_id, store_id, from_other_id }) => {
@@ -242,7 +231,6 @@ const UserMain = () => {
   }, [user?.name, ships.length, newShip, element?.open]);
 
   const { name, active_ship_id } = user;
-  // console.log({ active_ship_id });
   return (
     <>
     <Dialog  />

@@ -7,16 +7,6 @@ const Canvas = () => {
     pxArr, clr, size, setPxArr
   }));
 
-  // const defaultColor = (irow: number, icol: number): string =>
-  // !(irow & 1)
-  //   ? icol & 1
-  //     ? "white"
-  //     : "black"
-  //   : !(icol & 1)
-  //     ? "white"
-  //     : "black";
-
-
   return (
     <div
       style={{ ...styles.canvas, width: 320, height: 320, MozWindowDragging: "no-drag" }}
@@ -41,7 +31,6 @@ const Canvas = () => {
 
 const styles = {
   canvas: {
-    // borderRadius: 8,
     padding: 0,
     lineHeight: 0,
     overflow: "hidden",
