@@ -1,3 +1,9 @@
+@property --a {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
 .gridDiv {
   background-color: #2a2a74;
   border: 1px solid black;
@@ -5,8 +11,9 @@
   aspect-ratio: 1;
 }
 
-.player_ship {
-  text-shadow: 0 0 10px red;
+.player_ship.reloading {
+  background-color: #2a2a74;
+  filter: grayscale(0.6);
 }
 
 .player_ship::after {
@@ -18,17 +25,42 @@
   scale: 2;
   mix-blend-mode: overlay;
   border: 1px solid #aaa3;
-  background-color: #eee2;
-  /* background-color: #2a2a74; */
-  /* backdrop-filter: contrast(10); */
   z-index: -1;
   content: "";
   width: 100%;
   height: 100%;
+  background-image: conic-gradient(
+    transparent 0deg,
+    transparent var(--a),
+    #eee2 var(--a),
+    #eee2 360deg
+  );
+}
+
+.player_ship.reloading::after {
+  --a: 360deg;
+  background-color: transparent;
+  mix-blend-mode: normal;
+  z-index: 1;
+  transition: --a 1s linear;
 }
 
 .enemy_ship {
   background-color: orange;
+}
+
+.enemy_ship.shoot {
+  background-color: red;
+}
+
+.enemy_ship-prepare {
+  margin: 0 25%;
+  bottom: 50%;
+  position: absolute;
+  border-radius: 8px;
+  width: 50%;
+  height: 100%;
+  background-color: chocolate;
 }
 
 .player_ship--shadow {
@@ -40,6 +72,16 @@
   margin-top: -8px;
   margin-left: -8px;
   justify-content: center;
+}
+
+.shoot {
+  background-color: yellow;
+  border-radius: 50%;
+}
+
+.enemy_shoot {
+  background-color: blueviolet;
+  border-radius: 20% 5% 20% 5% 20% 5% 20% 5%;
 }
 
 .enemy_ship.player_ship {
