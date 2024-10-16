@@ -3,7 +3,7 @@ import {
   ReactElement,
   useCallback,
   useEffect,
-  useMemo,
+  useReducer,
   useState,
 } from "react";
 import "./game.css";
@@ -11,6 +11,12 @@ import { useUserContext } from "../../context/userContext";
 import shadowPixel from "../../utils/shadowPixel";
 import { FrontFetch } from "../../utils/FrontFetch";
 import { useNavigate } from "react-router-dom";
+import {
+  gameReducer,
+  init,
+  initialEnemyPos,
+  initialState,
+} from "../../utils/gameReducer";
 
 type GridDiv = ReactElement<
   HTMLDivElement,
@@ -25,9 +31,6 @@ const CLASS_SHOOT = "shoot";
 const CLASS_ENEMY_SHOOT = "enemy_shoot";
 const CLASS_RELOAD = "reloading";
 let ix = 0;
-
-const numSeq = (length: number, from: number = 0) =>
-  Array.from({ length }, (_, i: number) => from + i);
 
 const sel = (selector: string = GRID_CH_SEL) =>
   document.querySelector(selector);
@@ -47,21 +50,12 @@ const Game = () => {
   const sizeRow = 20;
   const sizeCol = 30;
   const sizePx = 16;
-  const initialShipPos = 510;
-  const initialEnemyPos = [...numSeq(15, 0), ...numSeq(15, 20)];
   const playerShip = shadowPixel(
     ships.find(({ ship_id }) => ship_id == user.active_ship_id)?.pixels || [""],
     2
   );
 
-  const [shootPos, setShootPos] = useState<number[]>([]);
-  const [enemyShoot, setEnemyShoot] = useState<number[]>([]);
-  const [playerPos, setPlayerPos] = useState<number>(initialShipPos);
-  const [enemyPos, setEnemyPos] = useState<number[][]>([initialEnemyPos]);
-  const [enemyDir, setEnemyDir] = useState<(1 | -1 | 0)[]>([1]);
-  const [reload, setReload] = useState<boolean>(false);
-  const [points, setPoints] = useState<number>(0);
-  const [pause, setPause] = useState<boolean>(false);
+  const [state, dispatch] = useReducer(gameReducer, initialState, init);
 
   const createGrid = (): ReactElement<
     HTMLDivElement,
@@ -80,37 +74,64 @@ const Game = () => {
       const isShoot =
         shootPos?.length && shootPos.includes(i) ? ` ${CLASS_SHOOT}` : "";
       if (playerPos == -1 || (isEnemy && isPlayer)) {
-        if (playerPos != -1) setPlayerPos(-1);
+        if (playerPos != -1) dispatch({ type: "SET_PLAYER_POS", payload: -1 }); //setPlayerPos(-1);
         return [<div key={601}></div>];
       }
       if (isEnemy && isShoot) {
         const id = setTimeout(() => {
-          setShootPos((prev) => prev.filter((pos) => pos != i));
-          setEnemyPos((prev) => {
-            const prevEnNumber = prev.flat(1).length;
-            const returned = prev.map((posarr) =>
-              posarr.filter((pos) => pos != i)
-            );
-            if (returned.flat(1).length < prevEnNumber)
-              setPoints((prev) => prev + 0.5);
-
-            return returned;
+          dispatch({
+            type: "SET_SHOOT_POS",
+            payload: shootPos.filter((pos) => pos != i),
           });
+          // setShootPos((prev) => prev.filter((pos) => pos != i));
+
+          const prevEnNumber = enemyPos.flat(1).length;
+          const returned = enemyPos.map((posarr) =>
+            posarr.filter((pos) => pos != i)
+          );
+          if (returned.flat(1).length < prevEnNumber)
+            dispatch({ type: "SET_POINTS", payload: points + 0.5 });
+          // setPoints((prev) => prev + 0.5);
+
+          dispatch({ type: "SET_ENEMY_POS", payload: returned });
+          // setEnemyPos((prev) => {
+          // const prevEnNumber = prev.flat(1).length;
+          // const returned = prev.map((posarr) =>
+          //   posarr.filter((pos) => pos != i)
+          // );
+          // if (returned.flat(1).length < prevEnNumber)
+          //   setPoints((prev) => prev + 0.5);
+
+          //   return returned;
+          // });
 
           clearTimeout(id);
         }, 100);
       }
       if (isPlayer && isEnemyShoot) {
         const id = setTimeout(() => {
-          setEnemyShoot((prev) => prev.filter((pos) => pos != i));
-          setPlayerPos(-1);
+          dispatch({
+            type: "SET_ENEMY_SHOOT",
+            payload: enemyShoot.filter((pos) => pos != i),
+          });
+          // setEnemyShoot((prev) => prev.filter((pos) => pos != i));
+          dispatch({ type: "SET_PLAYER_POS", payload: -1 });
+          // setPlayerPos(-1);
           clearTimeout(id);
         }, 100);
       }
       if (isShoot && isEnemyShoot) {
         const id = setTimeout(() => {
-          setEnemyShoot((prev) => prev.filter((pos) => pos != i));
-          setShootPos((prev) => prev.filter((pos) => pos != i));
+          dispatch({
+            type: "SET_ENEMY_SHOOT",
+            payload: enemyShoot.filter((pos) => pos != i),
+          });
+          // setEnemyShoot((prev) => prev.filter((pos) => pos != i));
+          dispatch({
+            type: "SET_SHOOT_POS",
+            payload: shootPos.filter((pos) => pos != i),
+          });
+          // setShootPos((prev) => prev.filter((pos) => pos != i));
           clearTimeout(id);
         }, 100);
       }
@@ -146,6 +167,17 @@ const Game = () => {
     return arrayDivs;
   };
 
+  const {
+    playerPos,
+    enemyPos,
+    shootPos,
+    enemyShoot,
+    enemyDir,
+    pause,
+    points,
+    reload,
+  } = state;
+
   const gameOverScreen = (
     <div
       key={1}
@@ -155,11 +187,16 @@ const Game = () => {
       <button
         className="button_retry"
         onClick={() => {
-          setPlayerPos(initialShipPos);
-          setEnemyPos([initialEnemyPos]);
-          setEnemyDir([1]);
-          setShootPos([]);
-          setEnemyShoot([]);
+          init();
+          // dispatch({type: "SET_PLAYER_POS", payload: 510})
+          // // setPlayerPos(initialShipPos);
+          // dispatch({type: "SET_ENEMY_POS", payload: [sinitialEnemyPos]})
+          // // setEnemyPos([initialEnemyPos]);
+          // dispatch({type: "SET_ENEMY_DIR", payload: [1]})
+          // // setEnemyDir([1]);
+          // dispatch(se)
+          // setShootPos([]);
+          // setEnemyShoot([]);
         }}
       >
         Play Again?
@@ -182,7 +219,8 @@ const Game = () => {
       <h3>Pause</h3>
       <button
         onClick={() => {
-          setPause(false);
+          dispatch({ type: "SET_PAUSE", payload: false });
+          // setPause(false);
         }}
       >
         Resume
@@ -205,22 +243,33 @@ const Game = () => {
         return;
 
       if (ekey == "ArrowLeft")
-        setPlayerPos((prevPos) =>
-          !(prevPos % sizeRow) ? prevPos : prevPos - 1
-        );
+        dispatch({
+          type: "SET_PLAYER_POS",
+          payload: !(playerPos % sizeRow) ? playerPos : playerPos - 1,
+        });
+      // setPlayerPos((prevPos) =>
+      //   !(prevPos % sizeRow) ? prevPos : prevPos - 1
+      // );
       if (ekey == "ArrowRight")
-        setPlayerPos((prevPos: number) =>
-          !((prevPos + 1) % sizeRow) ? prevPos : prevPos + 1
-        );
+        dispatch({
+          type: "SET_PLAYER_POS",
+          payload: !((playerPos + 1) % sizeRow) ? playerPos : playerPos + 1,
+        });
+      // setPlayerPos((prevPos: number) =>
+      //   !((prevPos + 1) % sizeRow) ? prevPos : prevPos + 1
+      // );
 
       if (ekey == "ArrowUp") {
         if (reload) return;
         if (!reload) {
           const id = setTimeout(() => {
-            setReload(false);
+            dispatch({ type: "SET_RELOAD", payload: false });
+            // setReload(false);
             clearInterval(id);
           }, 1000);
-          setReload(true);
+
+          dispatch({ type: "SET_RELOAD", payload: true });
+          // setReload(true);
 
           let childs = selChilds();
           if (!Array.isArray(childs)) childs = [childs];
@@ -231,9 +280,15 @@ const Game = () => {
             .find((pos) => pos);
 
           if (currPlayerPos)
-            setShootPos((prev) =>
-              prev ? [...prev, currPlayerPos] : [currPlayerPos]
-            );
+            dispatch({
+              type: "SET_SHOOT_POS",
+              payload: shootPos
+                ? [...shootPos, currPlayerPos]
+                : [currPlayerPos],
+            });
+          // setShootPos((prev) =>
+          //   prev ? [...prev, currPlayerPos] : [currPlayerPos]
+          // );
         }
         return;
       }
@@ -268,7 +323,12 @@ const Game = () => {
         preparedToAttack[randomIndex] = preparedToAttack[i];
       }
 
-      if (!(ix % 6)) setEnemyShoot((prev) => [...prev, ...preparedToAttack]);
+      if (!(ix % 6))
+        dispatch({
+          type: "SET_ENEMY_SHOOT",
+          payload: [...enemyShoot, ...preparedToAttack],
+        });
+      // if (!(ix % 6)) setEnemyShoot((prev) => [...prev, ...preparedToAttack]);
 
       let newDir: 1 | -1 | 0;
       if (edgeL || edgeR) {
@@ -283,7 +343,8 @@ const Game = () => {
       const newEnemyDir = enemyDir;
       newEnemyDir.splice(groupEn, 1, newDir);
 
-      setEnemyDir(newEnemyDir);
+      dispatch({ type: "SET_ENEMY_DIR", payload: newEnemyDir });
+      // setEnemyDir(newEnemyDir);
 
       const jumpEdging = Number(edgeL || edgeR) * sizeRow;
 
@@ -297,17 +358,23 @@ const Game = () => {
       if (!movedEnemies.length) {
         const newEnemyDir = enemyDir;
         newEnemyDir.splice(groupEn, 1);
-        setEnemyDir(newEnemyDir);
+        dispatch({ type: "SET_ENEMY_DIR", payload: newEnemyDir });
+        // setEnemyDir(newEnemyDir);
       }
 
       return movedEnemies;
     });
     if (needToSpawn) {
       newEnemiespos.unshift(initialEnemyPos);
-      setEnemyDir([1, ...enemyDir]);
+      dispatch({ type: "SET_ENEMY_DIR", payload: [1, ...enemyDir] });
+      // setEnemyDir([1, ...enemyDir]);
     }
 
-    setEnemyPos(newEnemiespos.filter((enPos) => enPos.length));
+    dispatch({
+      type: "SET_ENEMY_POS",
+      payload: newEnemiespos.filter((enPos) => enPos.length),
+    });
+    // setEnemyPos(newEnemiespos.filter((enPos) => enPos.length));
   }, [enemyPos, enemyDir, shootPos, enemyShoot]);
 
   const movShoots = useCallback(() => {
@@ -316,12 +383,14 @@ const Game = () => {
     let newShootPos = shootPos.map((dir) => dir - sizeRow);
     newShootPos = newShootPos.filter(existedGridShoots);
 
-    setShootPos(newShootPos);
+    dispatch({ type: "SET_SHOOT_POS", payload: newShootPos });
+    // setShootPos(newShootPos);
 
     let newEnShootPos = enemyShoot.map((dir) => dir + sizeRow);
     newEnShootPos = newEnShootPos.filter(existedGridShoots);
 
-    setEnemyShoot(newEnShootPos);
+    dispatch({ type: "SET_ENEMY_SHOOT", payload: newEnShootPos });
+    // setEnemyShoot(newEnShootPos);
   }, [shootPos, enemyShoot]);
 
   useEffect(() => {
@@ -344,10 +413,11 @@ const Game = () => {
       );
     };
     if (playerPos == -1) {
-      setEnemyPos([]);
-      setShootPos([]);
-      setEnemyShoot([]);
       setScore({ ...score, points: score.points + points });
+      init();
+      // setEnemyPos([]);
+      // setShootPos([]);
+      // setEnemyShoot([]);
       sumPoints();
     }
   }, [playerPos]);
@@ -356,7 +426,10 @@ const Game = () => {
     <div>
       <div>Game</div>
       <div>Points: {points}</div>
-      <button onClick={() => setPause(true)}>||</button>
+      <button onClick={() => dispatch({ type: "SET_PAUSE", payload: true })}>
+        ||
+      </button>
+      {/* <button onClick={() => setPause(true)}>||</button> */}
       <div
         style={{
           width: sizeRow * sizePx,
