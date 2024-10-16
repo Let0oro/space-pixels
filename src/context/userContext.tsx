@@ -5,6 +5,11 @@ type RankStore = {
   setRank: (def: RankStore["rank"]) => void;
 };
 
+type ScoreStore = {
+  score: {points: number, playername: string};
+  setScore: (def: ScoreStore["score"]) => void;
+}
+
 type ShipStore = {
   ships: {
     pixels: string[];
@@ -38,11 +43,13 @@ type UserStore = {
   setUser: (def: UserStore["user"]) => void;
 };
 
-type UserContext = RankStore & ShipStore & LikeStore & UserStore;
+type UserContext = RankStore & ScoreStore & ShipStore & LikeStore & UserStore;
 
 export const useUserContext = create<UserContext>()((set) => ({
   rank: [],
   setRank: (rank) => set(() => ({ rank })),
+  score: {points: 0, playername: ""},
+  setScore: (score) => set(() => ({score})),
   ships: [],
   setShips: (ships) => set(() => ({ ships })),
   likes: [],

@@ -25,7 +25,7 @@ interface parseMethodInterface {
     };
     post: { painted: string; post: string; like: string; purchase: string };
     put: string;
-    delete: {one: string; post: string, like: string;}
+    delete: { one: string; post: string; like: string };
   };
   score: {
     get: { get: string; getAll: string };
@@ -52,7 +52,13 @@ type typeMethodType =
   | "liked"
   | "public"
   | "likedplayer"
-  | "publicplayer" | "post" | "one" | "like" | "purchase" | "follow" | "unfollow";
+  | "publicplayer"
+  | "post"
+  | "one"
+  | "like"
+  | "purchase"
+  | "follow"
+  | "unfollow";
 type routeType = {
   name: nameType;
   method: methodType;
@@ -95,9 +101,14 @@ export class FrontFetch {
         publicplayer: "/public/player/",
         likedplayer: "/liked/player/",
       },
-      post: { painted: "/painted/", purchase: "/purchase/", like: "/like/",  post: "/post/" },
+      post: {
+        painted: "/painted/",
+        purchase: "/purchase/",
+        like: "/like/",
+        post: "/post/",
+      },
       put: "/",
-      delete: {one: "/", post: "/post/", like: "/like/"},
+      delete: { one: "/", post: "/post/", like: "/like/" },
     },
     score: {
       get: { get: "/", getAll: "/" },
@@ -112,7 +123,7 @@ export class FrontFetch {
       const response = await fetch(url, { ...opts, mode: "cors" });
       const data = await response.json();
 
-      console.log({ data, opts });
+      // console.log({ data, opts });
 
       if (!response.ok) {
         if (
@@ -163,7 +174,7 @@ export class FrontFetch {
     opts.credentials = "include";
 
     const url = `${this.baseUrl}${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
-    console.log({ typeMethod, id, pMethod, opts, url });
+    // console.log({ typeMethod, id, pMethod, opts, url });
     return await this.Fetch(url, opts);
   }
 }

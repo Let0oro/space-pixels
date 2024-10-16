@@ -7,7 +7,7 @@ import ErrorPage from "./components/ErrorPage.tsx";
 import Entrance from "./components/Entrance/Entrance.tsx";
 import PixelStudio from "./pages/PixelStudio.tsx";
 import LogSing from "./pages/LogSign.tsx";
-import Game from "./pages/Game.tsx";
+import Game from "./pages/Game/Game.tsx";
 import UserMain from "./pages/UserMain.tsx";
 import Shop from "./pages/Shop.tsx";
 
