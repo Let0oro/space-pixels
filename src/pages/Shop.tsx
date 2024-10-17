@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useUserContext } from "../context/userContext";
 import { FrontFetch } from "../utils/FrontFetch";
 import { useNavigate } from "react-router-dom";
@@ -21,9 +21,8 @@ const ShipsList = memo(
     }[];
     player_selected?: number;
   }) => {
-
-    const {setLikes} = useUserContext();
-    const {element} = useDialogContext();
+    const { setLikes } = useUserContext();
+    const { element } = useDialogContext();
 
     useEffect(() => {
       const getLikesPlayer = async () => {
@@ -53,22 +52,23 @@ const ShipsList = memo(
               minWidth: "content",
             }}
           >
-            {ships.sort(({store_id: a}, {store_id: b}) => a && b ? (a - b) : 0).map(({ pixels, ship_id, name, player_id, store_id, price }) => {
+            {ships
+              .sort(({ store_id: a }, { store_id: b }) => (a && b ? a - b : 0))
+              .map(({ pixels, ship_id, name, player_id, store_id, price }) => {
+                const boxShadow = shadowPixel(pixels);
 
-              const boxShadow = shadowPixel(pixels);
-
-              return (
-                <CardShip
-                  key={ship_id}
-                  store_id={store_id}
-                  name={name}
-                  ship_id={ship_id}
-                  player_id={player_id}
-                  boxShadow={boxShadow}
-                  price={price}
-                />
-              );
-            })}
+                return (
+                  <CardShip
+                    key={ship_id}
+                    store_id={store_id}
+                    name={name}
+                    ship_id={ship_id}
+                    player_id={player_id}
+                    boxShadow={boxShadow}
+                    price={price}
+                  />
+                );
+              })}
           </div>
         </div>
       );
@@ -76,9 +76,27 @@ const ShipsList = memo(
 );
 
 const Shop = () => {
-  const { user, setUser } = useUserContext();
-  const [publicShips, setPublicShips] = useState();
+  const { user, setUser, likes } = useUserContext();
+  const [publicShips, setPublicShips] = useState<any[]>();
+  const [filter, setFilter] = useState<"all" | "liked" | "feed">("all");
   const navigate = useNavigate();
+
+  const filteredShips = useMemo(() => {
+    if (!publicShips || !publicShips.length || !likes.length || !user)
+      return [];
+    const desglosedLikes = likes.map(({ store_id }) => store_id);
+    console.log({ desglosedLikes });
+    const ships: { all: any[]; liked: any[]; feed: any[] } = {
+      all: publicShips,
+      liked: publicShips.filter((ship: any) =>
+        desglosedLikes.includes(ship.store_id)
+      ),
+      feed: publicShips.filter((ship: any) =>
+        user.following_id?.includes(ship.player_id)
+      ),
+    };
+    return ships[filter];
+  }, [filter, publicShips, user?.following_id, likes]);
 
   useEffect(() => {
     const getUserFromSession = async () => {
@@ -108,13 +126,24 @@ const Shop = () => {
 
   return (
     <div>
-      <Dialog  />
+      <Dialog />
       <h3 style={{ position: "fixed", right: "1rem", bottom: 0 }}>
-        coins: <span style={{color:"greenyellow"}}>{user.coins}</span>
+        coins: <span style={{ color: "greenyellow" }}>{user.coins}</span>
       </h3>
       <h2>Shop</h2>
+      <div
+        style={{
+          display: "flex",
+          marginLeft: "1rem",
+          justifyContent: "space-around",
+        }}
+      >
+        <button onClick={() => setFilter("all")}>All</button>
+        <button onClick={() => setFilter("liked")}>Liked</button>
+        <button onClick={() => setFilter("feed")}>Feed</button>
+      </div>
       <div>
-        <ShipsList ships={publicShips ? publicShips : []} />
+        <ShipsList ships={filteredShips} />
       </div>
     </div>
   );

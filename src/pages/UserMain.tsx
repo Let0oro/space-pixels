@@ -63,9 +63,18 @@ const RankElement = memo(
 
 const ShipsList = memo(
   ({
+    user,
     ships,
     player_selected,
   }: {
+    user: {
+      name?: string;
+      email?: string;
+      active_ship_id?: number | null;
+      coins?: number;
+      id?: number;
+      following_id?: number[] | null;
+    };
     ships: {
       pixels: string[];
       player_id: number;
@@ -75,7 +84,7 @@ const ShipsList = memo(
     }[];
     player_selected: number;
   }) => {
-    const { setUser, user, setShips } = useUserContext();
+    const { setUser, setShips } = useUserContext();
     const { element, setShipInfo, setType } = useDialogContext();
     const [publicMode, setPublicMode] = useState<boolean>(false);
 
@@ -128,6 +137,11 @@ const ShipsList = memo(
       );
       if (response) setUser({ ...user, active_ship_id: ship_id });
     };
+
+    useEffect(() => {
+      if (!user.active_ship_id && user.id && ships.length && ships[0].ship_id)
+        changeSelected(ships[0].ship_id);
+    }, [ships?.length, user?.id]);
 
     return (
       <div style={{ display: "flex", gap: ".4rem" }}>
@@ -245,7 +259,11 @@ const UserMain = () => {
       </h2>
       <h4>Your ships collection</h4>
       {user.id ? (
-        <ShipsList ships={ships} player_selected={active_ship_id || 1} />
+        <ShipsList
+          user={user}
+          ships={ships}
+          player_selected={active_ship_id || 1}
+        />
       ) : (
         <h4>Charging player ships...</h4>
       )}
