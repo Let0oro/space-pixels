@@ -79,38 +79,37 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
   const { user, setUser } = useUserContext();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const response = await FrontFetch.caller(
+    const datares = await FrontFetch.caller(
       { name: "player", method: "post", typeMethod: type },
       data
     );
-    setMessage(response.message);
+    console.log({ datares });
+    setMessage(datares.message);
     if (
       ![
         "session expired",
         "Player already exists with this name or email, try with other",
-      ].includes(response.message)
+        "Incorrect password",
+      ].includes(datares.message)
     )
       navigate(type == "register" ? "/pixel" : "/usermain");
   };
 
   useEffect(() => {
     const getUserFromSession = async () => {
-      const { password: undefined, ...response } = await FrontFetch.caller({
+      const { password: undefined, ...data } = await FrontFetch.caller({
         name: "player",
         method: "get",
         typeMethod: "session",
       });
 
-      if (response.message != "session expired") {
-        setUser(response);
+      if (data.message != "session expired") {
+        setUser(data);
         navigate("/usermain");
       }
     };
     if (!user.id && type == "register") getUserFromSession();
   }, [user]);
-
-  useEffect(() => {
-  }, [message]);
 
   if (type == "login")
     return (

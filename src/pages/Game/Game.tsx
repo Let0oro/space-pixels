@@ -166,7 +166,7 @@ const Game = () => {
       </button>
       <button
         onClick={() => {
-          navigation("usermain");
+          navigation("/usermain", { replace: true });
         }}
       >
         Main
@@ -189,7 +189,7 @@ const Game = () => {
       </button>
       <button
         onClick={() => {
-          navigation("usermain");
+          navigation("/usermain", { replace: true });
         }}
       >
         Main (you could lose evvery points of this match)
@@ -344,6 +344,7 @@ const Game = () => {
       );
     };
     if (playerPos == -1) {
+      window.removeEventListener("keydown", handleKey);
       setEnemyPos([]);
       setShootPos([]);
       setEnemyShoot([]);
