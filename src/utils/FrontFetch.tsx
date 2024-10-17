@@ -123,13 +123,14 @@ export class FrontFetch {
       const response = await fetch(url, { ...opts, mode: "cors" });
       const data = await response.json();
 
-      // console.log({ data, opts });
+      console.log({ data, opts });
 
       if (!response.ok) {
         if (
           [
             "session expired",
             "Player already exists with this name or email, try with other",
+            "Incorrect password",
           ].includes(data.message)
         ) {
           return data;
@@ -142,7 +143,7 @@ export class FrontFetch {
 
       return data;
     } catch (error) {
-      // console.error("Fetch error: " + error);
+      console.error("Fetch error: " + error);
       throw error;
     }
   }
@@ -174,7 +175,7 @@ export class FrontFetch {
     opts.credentials = "include";
 
     const url = `${this.baseUrl}${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
-    // console.log({ typeMethod, id, pMethod, opts, url });
+    console.log({ typeMethod, id, pMethod, opts, url });
     return await this.Fetch(url, opts);
   }
 }
