@@ -94,10 +94,14 @@ const UserProfile = memo(() => {
             justifyContent: "space-evenly",
           }}
         >
-          {shipsProf && user.name == shipsProf[0].name ? "You!" : shipsProf[0].name}{" "}
-          {shipsProf && user.name != shipsProf[0].name  && <button style={{ fontSize: ".8rem" }} onClick={followOrNot}>
-            {isCurrentFollowing ? "Unfollow" : "Follow"}
-          </button>}
+          {shipsProf && user.name == shipsProf[0].name
+            ? "You!"
+            : shipsProf[0].name}{" "}
+          {shipsProf && user.name != shipsProf[0].name && (
+            <button style={{ fontSize: ".8rem" }} onClick={followOrNot}>
+              {isCurrentFollowing ? "Unfollow" : "Follow"}
+            </button>
+          )}
         </h2>
         {shipsProf &&
           shipsProf.map(
@@ -123,7 +127,8 @@ const UserProfile = memo(() => {
 
 const PublicShip = () => {
   const {
-    shipInfo: { store_id, ship_id }, element
+    shipInfo: { store_id, ship_id },
+    element,
   } = useDialogContext();
   const { ships, setShips } = useUserContext();
   const [price, setPrice] = useState(20);
@@ -152,34 +157,46 @@ const PublicShip = () => {
       const newShips = [...ships];
       if (changedShip) newShips.splice(changedShipNo, 1, changedShip);
       setShips(newShips);
-      element && element.close()
+      element && element.close();
     }
   };
 
   return (
     <>
-      <h2>Publish your ship</h2>
-      <fieldset>
-        Set the public price of your ship:{" "}
-        <input
-          min={20}
-          max={40}
-          step={5}
-          inputMode="numeric"
-          type="number"
-          value={price}
-          onChange={(e): void => {
-            const value = Number((e.target as HTMLInputElement).value);
-            setPrice(value);
-          }}
-        />
-        <p style={{ color: "GrayText" }}>
-          We suggest a correct price to 20 coins for 8x8 ships and 40 for
-          32x32px{" "}
-        </p>
-        {(price < 20 || price > 40) && <p style={{color:"red"}} >The price must be between 20 and 40 coins</p>}
-      </fieldset>
-      <button disabled={price < 20 || price > 40}  style={{marginRight: ".4rem"}} onClick={() => publish()} >{store_id == null ? "Publish" : "Unpublish"}</button>
+      <h2>{store_id != null ? "Unp" : "P"}ublish your ship</h2>
+      {store_id == null && (
+        <fieldset>
+          Set the public price of your ship:{" "}
+          <input
+            min={20}
+            max={40}
+            step={5}
+            inputMode="numeric"
+            type="number"
+            value={price}
+            onChange={(e): void => {
+              const value = Number((e.target as HTMLInputElement).value);
+              setPrice(value);
+            }}
+          />
+          <p style={{ color: "GrayText" }}>
+            We suggest a correct price to 20 coins for 8x8 ships and 40 for
+            32x32px{" "}
+          </p>
+          {(price < 20 || price > 40) && (
+            <p style={{ color: "red" }}>
+              The price must be between 20 and 40 coins
+            </p>
+          )}
+        </fieldset>
+      )}
+      <button
+        disabled={price < 20 || price > 40}
+        style={{ marginRight: ".4rem" }}
+        onClick={() => publish()}
+      >
+        {store_id == null ? "Publish" : "Unpublish"}
+      </button>
     </>
   );
 };

@@ -15,13 +15,13 @@ function App() {
     } else setStart(true);
   }, [path]);
 
-  const showLogoLS =
-    ["/login", "/signup", "/main"].includes(path) || path == "/";
+  // const showLogoLS =
+  //   ["/login", "/signup", "/main"].includes(path) || path == "/";
 
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <LogoSL wanted={showLogoLS ? ["logo", "SL"] : ["logo"]} />
+        <LogoSL />
 
         <Outlet />
         {!start && (

@@ -44,6 +44,7 @@ const RankElement = memo(
                   padding: ".5rem 0",
                 }}
               >
+                <span> #{ix + 1} </span>
                 <span
                   style={{
                     color: currUser === playername ? "#B836BA" : "#535BF2",
@@ -62,9 +63,18 @@ const RankElement = memo(
 
 const ShipsList = memo(
   ({
+    user,
     ships,
     player_selected,
   }: {
+    user: {
+      name?: string;
+      email?: string;
+      active_ship_id?: number | null;
+      coins?: number;
+      id?: number;
+      following_id?: number[] | null;
+    };
     ships: {
       pixels: string[];
       player_id: number;
@@ -74,8 +84,8 @@ const ShipsList = memo(
     }[];
     player_selected: number;
   }) => {
-    const { setUser, user, setShips } = useUserContext();
-    const {element, setShipInfo, setType} = useDialogContext();
+    const { setUser, setShips } = useUserContext();
+    const { element, setShipInfo, setType } = useDialogContext();
     const [publicMode, setPublicMode] = useState<boolean>(false);
 
     const deleteSelected = async () => {
@@ -90,6 +100,7 @@ const ShipsList = memo(
         setShips(
           ships.filter(({ ship_id: idDel }) => idDel != user.active_ship_id)
         );
+        setUser({ ...user, active_ship_id: null });
         await FrontFetch.caller(
           {
             name: "player",
@@ -102,14 +113,19 @@ const ShipsList = memo(
       }
     };
 
-    const publicSelect = async (ship_id: number, store_id?: number | null, from_other_id?: number | null) => {
+    const publicSelect = async (
+      ship_id: number,
+      store_id?: number | null,
+      from_other_id?: number | null
+    ) => {
       if (from_other_id != null) return;
-      setShipInfo({ship_id, store_id});
+      setShipInfo({ ship_id, store_id });
       setType("public");
       element?.showModal();
     };
 
     const changeSelected = async (ship_id: number) => {
+      if (!ship_id || !user.id) return;
       const response = await FrontFetch.caller(
         {
           name: "player",
@@ -121,6 +137,11 @@ const ShipsList = memo(
       );
       if (response) setUser({ ...user, active_ship_id: ship_id });
     };
+
+    useEffect(() => {
+      if (!user.active_ship_id && user.id && ships.length && ships[0].ship_id)
+        changeSelected(ships[0].ship_id);
+    }, [ships?.length, user?.id]);
 
     return (
       <div style={{ display: "flex", gap: ".4rem" }}>
@@ -144,7 +165,6 @@ const ShipsList = memo(
           }}
         >
           {ships.map(({ pixels, ship_id, store_id, from_other_id }) => {
-
             const boxShadow = shadowPixel(pixels);
             return (
               <div
@@ -184,7 +204,7 @@ const ShipsList = memo(
 
 const UserMain = () => {
   const { user, setUser, rank, setRank, ships, setShips } = useUserContext();
-  const {element} = useDialogContext();
+  const { element } = useDialogContext();
 
   const [newShip, setNewShip] = useState<boolean>(false);
 
@@ -233,13 +253,30 @@ const UserMain = () => {
   const { name, active_ship_id } = user;
   return (
     <>
-    <Dialog  />
+      <Dialog />
       <h2>
         Welcome <span style={{ color: "#535BF2" }}>{name}</span>!
       </h2>
       <h4>Your ships collection</h4>
-      <ShipsList ships={ships} player_selected={active_ship_id || 1} />
-      <p style={{display: "flex", gap: "4px", flexWrap: "wrap", justifyContent: "center", alignItems: "center", fontSize: "clamp(.9rem, 2.5lvw, 1rem)" }}>
+      {user.id ? (
+        <ShipsList
+          user={user}
+          ships={ships}
+          player_selected={active_ship_id || 1}
+        />
+      ) : (
+        <h4>Charging player ships...</h4>
+      )}
+      <p
+        style={{
+          display: "flex",
+          gap: "4px",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          alignItems: "center",
+          fontSize: "clamp(.9rem, 2.5lvw, 1rem)",
+        }}
+      >
         Legend:{" "}
         <span style={{ backgroundColor: "green", padding: "4px 2px" }}>
           Published
@@ -254,13 +291,21 @@ const UserMain = () => {
       <Link to="/shop" className="link_shop">
         Shop
       </Link>
-      {/* <div style={{ display: "flex", gap: "2rem", justifyContent: "center" }}>
-        <Link to="/settings">Settings</Link>
-      </div> */}
 
-      <Link to="/game" style={{display: "block", width: "100%"}}>
-        <h3  className="button_play">Play</h3>
+      <Link
+        to={user.active_ship_id ? "/game" : ""}
+        style={{
+          ...{ display: "block", width: "100%" },
+          ...(!user.active_ship_id ? { filter: "grayscale(10)" } : {}),
+        }}
+      >
+        <h3 className="button_play">Play</h3>
       </Link>
+      {!user.active_ship_id && (
+        <p style={{ margin: 0, color: "crimson" }}>
+          You need a ship to play, please, select a ship from your collection
+        </p>
+      )}
 
       <div
         style={{
