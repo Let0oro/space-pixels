@@ -1,10 +1,16 @@
 import Canvas from "../components/PixelStudio/Canvas";
 import { useCanvasAttributes } from "../context/pixelContext";
-import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import { MuiColorInput } from "mui-color-input";
 import { TinyColor } from "@ctrl/tinycolor";
 import ShowAvatar from "../components/PixelStudio/ShowAvatar";
-import { FrontFetch } from "../utils/FrontFetch";
+import { FrontFetch } from "../utils/FrontFetch.ts";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const SizeSelector = () => {
@@ -13,7 +19,14 @@ const SizeSelector = () => {
   const [currentSize, setCurrentSize] = useState<number>(size);
 
   return (
-    <div style={{display: "flex", flexDirection: "row", gap: "0", justifyContent: "center"}}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        gap: "0",
+        justifyContent: "center",
+      }}
+    >
       <select
         className="number_selector"
         value={currentSize}
@@ -57,11 +70,19 @@ const ColorInput = () => {
   );
 
   const clrTranspBlind = useCallback(() => {
-    if (clr.length == 9) setClr(clr.replace(/.{2}$/, clr.slice(-2) == "00" ? "ff" : "00")); 
+    if (clr.length == 9)
+      setClr(clr.replace(/.{2}$/, clr.slice(-2) == "00" ? "ff" : "00"));
   }, [clr]);
 
   return (
-    <div style={{display: "flex", flexDirection: "row", gap: "0", justifyContent: "center"}}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        gap: "0",
+        justifyContent: "center",
+      }}
+    >
       <MuiColorInput
         value={clr}
         onChange={setClr}
@@ -83,54 +104,66 @@ const ColorInput = () => {
   );
 };
 
-const PixelStudio = ({ title = true, setNewShip }: { title?: boolean, setNewShip?: Dispatch<SetStateAction<boolean>> }) => {
+const PixelStudio = ({
+  title = true,
+  setNewShip,
+}: {
+  title?: boolean;
+  setNewShip?: Dispatch<SetStateAction<boolean>>;
+}) => {
   const { pxArr, size, setPxArr } = useCanvasAttributes();
 
   const navigate = useNavigate();
-  const {pathname: path} = useLocation();
+  const { pathname: path } = useLocation();
 
   const confirmAvatar = async () => {
     console.clear();
     const secuence = pxArr.flat(1);
     const response = await FrontFetch.caller(
       { name: "ship", method: "post", typeMethod: "painted" },
-      {secuence}
+      { secuence }
     );
     if (response) {
-      if (path == "/pixel") {navigate("/usermain")} else {setNewShip && setNewShip(bfr => !bfr)};
-      setPxArr(Array(size).fill(Array(size).fill("#0000")))
+      if (path == "/pixel") {
+        navigate("/usermain");
+      } else {
+        setNewShip && setNewShip((bfr) => !bfr);
+      }
+      setPxArr(Array(size).fill(Array(size).fill("#0000")));
     }
   };
 
   useMemo(() => {
-    if (pxArr.length != size) setPxArr(Array(size).fill(Array(size).fill("#0000")));
+    if (pxArr.length != size)
+      setPxArr(Array(size).fill(Array(size).fill("#0000")));
   }, [size]);
 
   return (
-      <div style={{display: "flex", flexDirection: "column", gap: "1rem"}}>
-        {title && <h2>Create your hero</h2>}
-        {title && <label
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: ".5rem",
-          alignItems: "stretch",
-          height: "min-content",
-          marginBottom: "1rem",
-        }}
+    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+      {title && <h2>Create your hero</h2>}
+      {title && (
+        <label
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: ".5rem",
+            alignItems: "stretch",
+            height: "min-content",
+            marginBottom: "1rem",
+          }}
         >
           <SizeSelector />
           <ColorInput />
         </label>
-        }
-        <Canvas />
-        {title || <ColorInput />}
-        {title || <SizeSelector />}
-        <div style={styles.finalDiv}>
-          <ShowAvatar />
-          <button onClick={confirmAvatar}>Confirm avatar</button>
-        </div>
+      )}
+      <Canvas />
+      {title || <ColorInput />}
+      {title || <SizeSelector />}
+      <div style={styles.finalDiv}>
+        <ShowAvatar />
+        <button onClick={confirmAvatar}>Confirm avatar</button>
       </div>
+    </div>
   );
 };
 

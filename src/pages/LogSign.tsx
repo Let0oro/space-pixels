@@ -5,7 +5,7 @@ import {
   FieldError,
   UseFormRegister,
 } from "react-hook-form";
-import { FrontFetch } from "../utils/FrontFetch";
+import { FrontFetch } from "../utils/FrontFetch.ts";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/userContext";
 

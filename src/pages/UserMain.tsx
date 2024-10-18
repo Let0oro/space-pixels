@@ -1,5 +1,5 @@
 import { memo, useEffect, useState } from "react";
-import { FrontFetch } from "../utils/FrontFetch";
+import { FrontFetch } from "../utils/FrontFetch.ts";
 import { Link, useNavigate } from "react-router-dom";
 import PixelStudio from "./PixelStudio";
 import { useUserContext } from "../context/userContext";

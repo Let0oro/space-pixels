@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FrontFetch } from "../../utils/FrontFetch";
+import { FrontFetch } from "../../utils/FrontFetch.ts";
 import { useUserContext } from "../../context/userContext";
 import { useDialogContext } from "../../context/dialogContext";
 
@@ -19,19 +19,17 @@ const CardShip = ({
   player_id,
   boxShadow,
   store_id,
-  isProfileScreen = false
+  isProfileScreen = false,
 }: CardShipParams) => {
-
-  const {user, setUser, ships, likes, setLikes} = useUserContext();
+  const { user, setUser, ships, likes, setLikes } = useUserContext();
   const [isPurchased, setIsPurchased] = useState<boolean>(false);
-  const {element, setOtherUserId, setType} = useDialogContext()
+  const { element, setOtherUserId, setType } = useDialogContext();
 
   const addLike = async () => {
     const response = await FrontFetch.caller(
       { name: "ship", method: "post", typeMethod: "like", id: `${player_id}` },
-      {store_id}
+      { store_id }
     );
-
 
     if (response) {
       const newLikes = await FrontFetch.caller({
@@ -43,7 +41,7 @@ const CardShip = ({
     }
   };
 
-  const  purchaseShip = async () => {
+  const purchaseShip = async () => {
     const response = await FrontFetch.caller(
       {
         name: "ship",
@@ -55,23 +53,25 @@ const CardShip = ({
     );
 
     if (response) {
-      setUser({...user, coins: ((user.coins != undefined && price) ? user.coins - price : 0)});
+      setUser({
+        ...user,
+        coins: user.coins != undefined && price ? user.coins - price : 0,
+      });
       setIsPurchased(true);
     }
-
   };
 
   const showUserInfo = (otherUserId: number) => {
     setOtherUserId(otherUserId);
     setType("user");
     element?.showModal();
-  }
+  };
 
   const storesIdLiked = likes?.map((v) => v.store_id);
   const isLikedFromMe: boolean =
     storesIdLiked && store_id ? storesIdLiked?.includes(store_id) : false;
 
-  const otherIdsFromMyShips = ships.map(sh => sh.from_other_id);
+  const otherIdsFromMyShips = ships.map((sh) => sh.from_other_id);
 
   return (
     <div
@@ -109,35 +109,43 @@ const CardShip = ({
         ></div>
       </div>
 
-      {user.id != player_id && <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "space-around",
-        }}
-      >
-        <button
-          disabled={isPurchased || otherIdsFromMyShips.includes(player_id)}
+      {user.id != player_id && (
+        <div
           style={{
-            marginTop: ".5rem",
-            padding: "2px 4px",
+            width: "100%",
             display: "flex",
+            justifyContent: "space-around",
           }}
-          onClick={purchaseShip}
         >
-          Purchase (<span style={{color: "greenyellow", display: "block"}}>{price}</span>)
-        </button>
-        <button
-          style={{
-            padding: "2px 4px",
-            color: isLikedFromMe ? "red" : "white",
-          }}
-          onClick={addLike}
-        >
-          ❤
-        </button>
-      </div>}
-      {!isProfileScreen && <button onClick={() => showUserInfo(player_id)}>{name}</button>}
+          <button
+            disabled={isPurchased || otherIdsFromMyShips.includes(player_id)}
+            style={{
+              marginTop: ".5rem",
+              padding: "2px 4px",
+              display: "flex",
+            }}
+            onClick={purchaseShip}
+          >
+            Purchase (
+            <span style={{ color: "greenyellow", display: "block" }}>
+              {price}
+            </span>
+            )
+          </button>
+          <button
+            style={{
+              padding: "2px 4px",
+              color: isLikedFromMe ? "red" : "white",
+            }}
+            onClick={addLike}
+          >
+            ❤
+          </button>
+        </div>
+      )}
+      {!isProfileScreen && (
+        <button onClick={() => showUserInfo(player_id)}>{name}</button>
+      )}
     </div>
   );
 };
