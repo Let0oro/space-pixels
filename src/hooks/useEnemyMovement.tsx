@@ -1,5 +1,5 @@
 // hooks/useEnemyMovement.tsx
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface UseEnemyMovementProps {
   enemyPos: number[][];
@@ -22,12 +22,14 @@ export const useEnemyMovement = ({
   initialEnemyPos,
   dispatch,
 }: UseEnemyMovementProps) => {
-  let ix = 0;
+  const [frames, setFrames] = useState(0);
 
   const movEnemys = useCallback(() => {
-    ix++;
+    setFrames((prv) => prv + 1);
     const needToSpawn = enemyPos.flat(1)[0] > 120;
     const existedGridEnemies = (pos: number) => pos < 600 && pos >= 0;
+
+    console.log({ initialEnPos: enemyPos });
 
     const newEnemiespos = enemyPos.map((arrpos, groupEn) => {
       const edgeL = arrpos.some((pos) => !(pos % sizeRow));
@@ -44,9 +46,10 @@ export const useEnemyMovement = ({
         preparedToAttack[randomIndex] = preparedToAttack[i];
       }
 
-      if (!(ix % 6)) {
-        dispatch({ type: "ENEMY_SHOOT", payload: preparedToAttack });
-      }
+      // if (!(frames % 5)) {
+      //   console.log("SPAWN SHOT ENEMY");
+      //   dispatch({ type: "SPAWN_ENEMY_SHOOT", payload: preparedToAttack });
+      // }
 
       let newDir: 1 | -1 | 0;
       if (edgeL || edgeR) {
@@ -56,10 +59,10 @@ export const useEnemyMovement = ({
           newDir = (Number(edgeL) * 1 + Number(edgeR) * -1) as 1 | -1;
         }
       } else {
-        newDir = enemyDir[groupEn];
+        newDir = enemyDir[groupEn] || 1;
       }
 
-      const newEnemyDir = [...enemyDir];
+      const newEnemyDir = enemyDir.copyWithin(0, 0);
       newEnemyDir.splice(groupEn, 1, newDir);
       dispatch({ type: "UPDATE_ENEMY_DIR", payload: newEnemyDir });
 
@@ -78,12 +81,16 @@ export const useEnemyMovement = ({
         dispatch({ type: "UPDATE_ENEMY_DIR", payload: newEnemyDir });
       }
 
+      console.log({ 3: movedEnemies });
+
       return movedEnemies;
     });
 
+    console.log({ endEnemyPos: enemyPos });
+
     if (needToSpawn) {
       newEnemiespos.unshift(initialEnemyPos);
-      dispatch({ type: "SPAWN_ENEMIES", payload: newEnemiespos });
+      // dispatch({ type: "SPAWN_ENEMIES", payload: newEnemiespos });
     }
 
     dispatch({
