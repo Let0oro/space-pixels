@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from "react";
 import { useDialogContext } from "../context/dialogContext";
 import { useUserContext } from "../context/userContext";
-import { FrontFetch } from "../utils/FrontFetch";
+import { FrontFetch } from "../utils/FrontFetch.ts";
 import CardShip from "./Shop/CardShip";
 import shadowPixel from "../utils/shadowPixel";
 

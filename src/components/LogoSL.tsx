@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useUserContext } from "../context/userContext";
-import { FrontFetch } from "../utils/FrontFetch";
+import { FrontFetch } from "../utils/FrontFetch.ts";
 
 const LogoSL = () => {
   const { setUser } = useUserContext();

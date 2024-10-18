@@ -1,6 +1,6 @@
 import { memo, useEffect, useMemo, useState } from "react";
 import { useUserContext } from "../context/userContext";
-import { FrontFetch } from "../utils/FrontFetch";
+import { FrontFetch } from "../utils/FrontFetch.ts";
 import { useNavigate } from "react-router-dom";
 import CardShip from "../components/Shop/CardShip";
 import Dialog from "../components/Dialog";

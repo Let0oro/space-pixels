@@ -15,9 +15,6 @@ function App() {
     } else setStart(true);
   }, [path]);
 
-  // const showLogoLS =
-  //   ["/login", "/signup", "/main"].includes(path) || path == "/";
-
   return (
     <>
       <QueryClientProvider client={queryClient}>
