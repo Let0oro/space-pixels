@@ -3,7 +3,6 @@ import {
   ReactElement,
   useCallback,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import "./game.css";
