@@ -14,7 +14,7 @@ const useSessionExpired = () => {
           method: "get",
           typeMethod: "session",
         });
-        console.log({ response });
+        console.log({ sessionResponse: response });
         if (response.error) navigate("/");
         setUser(response);
       } catch (error) {

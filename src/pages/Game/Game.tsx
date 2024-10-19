@@ -11,7 +11,7 @@ import shadowPixel from "../../utils/shadowPixel";
 import { useUserContext } from "../../context/userContext";
 import { useEnemyMovement } from "../../hooks/useEnemyMovement";
 import "./game.css";
-import useSessionExpired from "../../hooks/useSessionExpired";
+import { FrontFetch } from "../../utils/FrontFetch";
 
 const GameGrid = lazy(() => import("../../components/Game/GameGrid"));
 const GameOverScreen = lazy(
@@ -20,11 +20,9 @@ const GameOverScreen = lazy(
 const PauseScreen = lazy(() => import("../../components/Game/PauseScreen"));
 
 const Game: React.FC = () => {
-  const { user, ships, score, setScore } = useUserContext();
+  const { user, setUser, ships, score, setScore } = useUserContext();
   const navigation = useNavigate();
   const [state, dispatch] = useReducer(gameReducer, gameInitialState);
-
-  useSessionExpired();
 
   const sizeRow = 20;
   const sizeCol = 30;
@@ -36,6 +34,18 @@ const Game: React.FC = () => {
     ],
     2
   );
+
+  const sumPoints = useCallback(async () => {
+    await FrontFetch.caller(
+      { name: "score", method: "post" },
+      { points: state.points }
+    );
+    if (state.points >= 20)
+      setUser({
+        ...user,
+        coins: (user.coins || 0) + Math.floor(state.points / 20),
+      });
+  }, [state.playerPos, state.points]);
 
   const handleKey = useCallback(
     (event: KeyboardEvent) => {
@@ -71,12 +81,10 @@ const Game: React.FC = () => {
   const handlePause = () => dispatch({ type: "PAUSE" });
 
   const handleShootCollision = useCallback(() => {
-    console.log("handleShootCollision");
     state.shootPos.forEach((shootPos) => {
       const enemyHitIndex = state.enemyPos
         .flat()
         .findIndex((enemyPos) => enemyPos === shootPos);
-      console.log({ enemyHitIndex });
 
       if (enemyHitIndex !== -1) {
         const updatedEnemyPos = state.enemyPos.map((group) =>
@@ -115,6 +123,16 @@ const Game: React.FC = () => {
     initialEnemyPos,
     dispatch,
   });
+
+  useEffect(() => {
+    console.log({ scPoints: score.points });
+    console.log({ stPoints: state.points });
+    if (state.playerPos === -1) {
+      setScore({ ...score, points: score.points + state.points });
+      sumPoints();
+      window.removeEventListener("keydown", handleKey);
+    }
+  }, [state.points, state.playerPos]);
 
   if (!state.enemyPos.length || !ships.length) {
     return <div>Loading...</div>;

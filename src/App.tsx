@@ -23,7 +23,7 @@ function App() {
         <Outlet />
         {!start && (
           <button onClick={() => setStart(!start)}>
-            <Link to="/main">Start</Link>
+            <Link to="main">Start</Link>
           </button>
         )}
       </QueryClientProvider>

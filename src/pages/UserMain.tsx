@@ -1,4 +1,4 @@
-import { lazy, memo, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { FrontFetch } from "../utils/FrontFetch.ts";
 import { Link } from "react-router-dom";
 import PixelStudio from "./PixelStudio";
@@ -13,7 +13,7 @@ const RankElement = lazy(
 );
 
 const UserMain = () => {
-  const { user, rank, setRank, ships, setShips } = useUserContext();
+  const { user, rank, setRank, ships, setShips, setScore } = useUserContext();
   const { element } = useDialogContext();
 
   const [newShip, setNewShip] = useState<boolean>(false);
@@ -27,10 +27,14 @@ const UserMain = () => {
         method: "get",
         typeMethod: "get",
       });
-      setRank(Object.values(response));
+      const arrScore = Object.values(response) as {
+        points: number;
+        playername: string;
+      }[];
+      setRank(arrScore);
     };
     getRanking();
-  }, [rank?.length]);
+  }, [rank?.length, user.name]);
 
   useEffect(() => {
     const getShipsUser = async () => {

@@ -45,6 +45,11 @@ const GameGrid: React.FC<GridProps> = ({
             style={{ boxShadow: playerShip }}
           ></div>
         )}
+        {isEnemy &&
+          enemyPos
+            .flat(1)
+            .filter((pos, _, arrPos) => arrPos.includes(pos - sizeRow))
+            .includes(i) && <div className="enemy_ship-prepare"></div>}
       </div>
     );
   }

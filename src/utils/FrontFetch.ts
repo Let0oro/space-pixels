@@ -56,7 +56,7 @@ export class FrontFetch {
       const response = await fetch(url, { ...opts, mode: "cors" });
       const data = await response.json();
 
-      console.log({ data, opts });
+      // console.log({ data, opts });
 
       if (!response.ok) {
         if (data.error) return data;
@@ -95,7 +95,7 @@ export class FrontFetch {
     opts.credentials = "include";
 
     const url = `${this.baseUrl}${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
-    console.log({ typeMethod, id, pMethod, opts, url });
+    // console.log({ typeMethod, id, pMethod, opts, url });
     return await this.Fetch(url, opts);
   }
 }
