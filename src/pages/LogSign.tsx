@@ -173,7 +173,9 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
         <ErrorSpan errorObj={errors.password} />
         <hr style={{ margin: ".3rem 0", width: "100%" }} />
 
-        {message && <ErrorSpan errorObj={{ message }} />}
+        {message && message !== "session expired or nonexistent" && (
+          <ErrorSpan errorObj={{ message }} />
+        )}
         <input type="submit" />
       </form>
     );
