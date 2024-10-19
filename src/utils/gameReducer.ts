@@ -24,7 +24,7 @@ export type GameAction =
   | { type: "SHOOT" }
   | { type: "SHOOT" }
   | { type: "PLAYER_HIT" }
-  | { type: "RELOAD" }
+  | { type: "RELOAD"; payload: boolean }
   | { type: "ADD_POINTS"; payload: number }
   | { type: "PAUSE" }
   | { type: "RESUME" }
@@ -52,7 +52,7 @@ export const gameReducer = (
     case "PLAYER_HIT":
       return { ...state, playerPos: -1 };
     case "RELOAD":
-      return { ...state, reload: true };
+      return { ...state, reload: action.payload };
     case "ADD_POINTS":
       return { ...state, points: state.points + action.payload };
     case "PAUSE":

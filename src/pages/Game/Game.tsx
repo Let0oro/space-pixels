@@ -1,4 +1,3 @@
-// Game.tsx
 import React, {
   useReducer,
   useEffect,
@@ -10,8 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { gameReducer, gameInitialState, numSeq } from "../../utils/gameReducer";
 import shadowPixel from "../../utils/shadowPixel";
 import { useUserContext } from "../../context/userContext";
-import { useEnemyMovement } from "../../hooks/useEnemyMovement"; // Import the custom hook
-import "./game.css"; // Ensure styles are loaded
+import { useEnemyMovement } from "../../hooks/useEnemyMovement";
+import "./game.css";
 
 const GameGrid = lazy(() => import("../../components/Game/GameGrid"));
 const GameOverScreen = lazy(
@@ -44,7 +43,13 @@ const Game: React.FC = () => {
       } else if (event.key === "ArrowUp") {
         if (!state.reload) {
           dispatch({ type: "SHOOT" });
-          dispatch({ type: "RELOAD" });
+
+          const id = setTimeout(() => {
+            dispatch({ type: "RELOAD", payload: false });
+            clearInterval(id);
+          }, 1000);
+
+          dispatch({ type: "RELOAD", payload: true });
         }
       }
     },
@@ -110,7 +115,6 @@ const Game: React.FC = () => {
     dispatch,
   ]);
 
-  // Use the custom hook for enemy movement and shooting logic
   useEnemyMovement({
     enemyPos: state.enemyPos,
     enemyDir: state.enemyDir,
@@ -121,10 +125,6 @@ const Game: React.FC = () => {
     initialEnemyPos,
     dispatch,
   });
-
-  // useEffect(() => {
-  //   console.log({ enemyPos: state.enemyPos });
-  // }, [state.enemyPos]);
 
   if (!state.enemyPos.length || !ships.length) {
     return <div>Loading...</div>;
