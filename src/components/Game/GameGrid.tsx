@@ -17,9 +17,7 @@ const GameGrid: React.FC<GridProps> = ({
   const sizeCol = 30;
   const sizePx = 16;
 
-  useEffect(() => {
-    handleShootCollision();
-  }, [shootPos, enemyShoot, handleShootCollision]);
+  useEffect(handleShootCollision, [shootPos, enemyShoot, handleShootCollision]);
 
   const gridDivs = [];
 
@@ -47,6 +45,11 @@ const GameGrid: React.FC<GridProps> = ({
             style={{ boxShadow: playerShip }}
           ></div>
         )}
+        {isEnemy &&
+          enemyPos
+            .flat(1)
+            .filter((pos, _, arrPos) => arrPos.includes(pos - sizeRow))
+            .includes(i) && <div className="enemy_ship-prepare"></div>}
       </div>
     );
   }
