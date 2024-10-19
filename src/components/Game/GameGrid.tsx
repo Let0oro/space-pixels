@@ -17,9 +17,7 @@ const GameGrid: React.FC<GridProps> = ({
   const sizeCol = 30;
   const sizePx = 16;
 
-  useEffect(() => {
-    handleShootCollision();
-  }, [shootPos, enemyShoot, handleShootCollision]);
+  useEffect(handleShootCollision, [shootPos, enemyShoot, handleShootCollision]);
 
   const gridDivs = [];
 

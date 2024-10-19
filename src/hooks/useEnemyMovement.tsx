@@ -24,8 +24,6 @@ export const useEnemyMovement = ({
   const [frames, setFrames] = useState(0);
 
   const movEnemys = useCallback(() => {
-    console.clear();
-    console.log({ frames });
     setFrames((prevFrames) => prevFrames + 1);
     const needToSpawn = enemyPos[0][0] > 120;
     const existedGridEnemies = (pos: number) => pos < 600 && pos >= 0;
@@ -92,7 +90,7 @@ export const useEnemyMovement = ({
       type: "UPDATE_ENEMY_DIR",
       payload: newEnemiesDir,
     });
-  }, [frames]);
+  }, [frames, enemyPos]);
 
   const movShoots = useCallback(() => {
     const existedGridShoots = (pos: number) => pos < 600 && pos >= 0;
@@ -111,14 +109,14 @@ export const useEnemyMovement = ({
   useEffect(() => {
     let movEnemysId: undefined | number;
     if (playerPos !== -1)
-      movEnemysId = setInterval(movEnemys, 800 - frames / 5);
+      movEnemysId = setInterval(movEnemys, Math.max(800 - frames / 2.5, 40));
     return () => clearInterval(movEnemysId);
-  }, [movEnemys]);
+  }, [movEnemys, playerPos !== -1]);
 
   useEffect(() => {
     let movShootsId: undefined | number;
     if (playerPos !== -1)
-      movShootsId = setInterval(movShoots, 300 - frames / 5);
+      movShootsId = setInterval(movShoots, Math.max(300 - frames / 5, 40));
     return () => clearInterval(movShootsId);
   }, [movShoots]);
 };

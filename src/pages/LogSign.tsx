@@ -17,7 +17,7 @@ type Inputs = {
 };
 
 interface ErrorSpanProps {
-  errorObj: FieldError | undefined;
+  errorObj: FieldError | { message: string } | undefined;
 }
 
 const ErrorSpan = ({ errorObj }: ErrorSpanProps) => {
@@ -79,20 +79,16 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
   const { user, setUser } = useUserContext();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const datares = await FrontFetch.caller(
-      { name: "player", method: "post", typeMethod: type },
-      data
-    );
-    console.log({ datares });
-    setMessage(datares.message);
-    if (
-      ![
-        "session expired",
-        "Player already exists with this name or email, try with other",
-        "Incorrect password",
-      ].includes(datares.message)
-    )
-      navigate(type == "register" ? "/pixel" : "/usermain");
+    try {
+      const datares = await FrontFetch.caller(
+        { name: "player", method: "post", typeMethod: type },
+        data
+      );
+      if (!datares.error) navigate(type == "register" ? "/pixel" : "/usermain");
+      setMessage(datares.error);
+    } catch (error) {
+      console.error({ error });
+    }
   };
 
   useEffect(() => {
@@ -102,11 +98,13 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
         method: "get",
         typeMethod: "session",
       });
-
-      if (data.message != "session expired") {
+      if (!data.error) {
         setUser(data);
         navigate("/usermain");
+        return;
       }
+      console.log({ error: data.error });
+      setMessage(data.error);
     };
     if (!user.id && type == "register") getUserFromSession();
   }, [user]);
@@ -136,9 +134,9 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
 
         <PassInput register={register} />
         <ErrorSpan errorObj={errors.password} />
-        <br />
+        <hr style={{ margin: ".3rem 0", width: "100%" }} />
 
-        {message && <h4>{message}</h4>}
+        {message && <ErrorSpan errorObj={{ message }} />}
         <input type="submit" />
       </form>
     );
@@ -173,9 +171,9 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
 
         <PassInput register={register} />
         <ErrorSpan errorObj={errors.password} />
-        <br />
+        <hr style={{ margin: ".3rem 0", width: "100%" }} />
 
-        {message && <h4>{message}</h4>}
+        {message && <ErrorSpan errorObj={{ message }} />}
         <input type="submit" />
       </form>
     );

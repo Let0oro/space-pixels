@@ -22,7 +22,6 @@ export type GameAction =
   | { type: "UPDATE_ENEMY_DIR"; payload: (-1 | 0 | 1)[] }
   | { type: "MOVE_ENEMIES"; payload: number[][] }
   | { type: "SHOOT" }
-  | { type: "SHOOT" }
   | { type: "PLAYER_HIT" }
   | { type: "RELOAD"; payload: boolean }
   | { type: "ADD_POINTS"; payload: number }
