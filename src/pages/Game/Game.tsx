@@ -4,6 +4,7 @@ import React, {
   useCallback,
   Suspense,
   lazy,
+  useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { gameReducer, gameInitialState, numSeq } from "../../utils/gameReducer";
@@ -23,6 +24,7 @@ const Game: React.FC = () => {
   const { user, setUser, ships, score, setScore } = useUserContext();
   const navigation = useNavigate();
   const [state, dispatch] = useReducer(gameReducer, gameInitialState);
+  const [isMobile, setIsMobile] = useState(false);
 
   const sizeRow = 20;
   const sizeCol = 30;
@@ -125,14 +127,30 @@ const Game: React.FC = () => {
   });
 
   useEffect(() => {
-    console.log({ scPoints: score.points });
-    console.log({ stPoints: state.points });
     if (state.playerPos === -1) {
       setScore({ ...score, points: score.points + state.points });
       sumPoints();
       window.removeEventListener("keydown", handleKey);
     }
   }, [state.points, state.playerPos]);
+
+  useEffect(() => {
+    function isMobileDevice() {
+      const isMobileUA =
+        /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        );
+      const isMobileScreen = window.matchMedia("(max-width: 767px)").matches;
+
+      return isMobileUA || isMobileScreen;
+    }
+
+    if (isMobileDevice()) {
+      setIsMobile(true);
+    } else {
+      setIsMobile(false);
+    }
+  }, [navigator.userAgent, window.matchMedia]);
 
   if (!state.enemyPos.length || !ships.length) {
     return <div>Loading...</div>;
@@ -159,9 +177,13 @@ const Game: React.FC = () => {
 
   return (
     <div>
-      <div>Game</div>
       <div>Points: {state.points}</div>
-      <button onClick={handlePause}>||</button>
+      <button
+        style={{ fontSize: "clamp(.8rem, 2lvh, 1rem)" }}
+        onClick={handlePause}
+      >
+        ||
+      </button>
 
       <Suspense fallback={<div>Loading Grid...</div>}>
         <div
@@ -170,7 +192,7 @@ const Game: React.FC = () => {
             height: sizeCol * 16,
             display: "flex",
             flexWrap: "wrap",
-            margin: "2rem auto",
+            margin: "0 auto",
           }}
           className="grid"
         >
@@ -181,6 +203,32 @@ const Game: React.FC = () => {
           />
         </div>
       </Suspense>
+      {isMobile && (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            margin: 0,
+            fontSize: "clamp(.8rem, 2lvh, 1rem)",
+          }}
+        >
+          <button
+            onClick={() => handleKey({ key: "ArrowLeft" } as KeyboardEvent)}
+          >
+            {"<"}
+          </button>
+          <button
+            onClick={() => handleKey({ key: "ArrowUp" } as KeyboardEvent)}
+          >
+            {"shoot"}
+          </button>
+          <button
+            onClick={() => handleKey({ key: "ArrowRight" } as KeyboardEvent)}
+          >
+            {">"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
