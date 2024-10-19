@@ -122,9 +122,9 @@ const Game: React.FC = () => {
     dispatch,
   });
 
-  useEffect(() => {
-    console.log({ enemyPos: state.enemyPos });
-  }, [state.enemyPos]);
+  // useEffect(() => {
+  //   console.log({ enemyPos: state.enemyPos });
+  // }, [state.enemyPos]);
 
   if (!state.enemyPos.length || !ships.length) {
     return <div>Loading...</div>;
