@@ -29,12 +29,10 @@
   content: "";
   width: 100%;
   height: 100%;
-  background-image: conic-gradient(
-    transparent 0deg,
-    transparent var(--a),
-    #eee2 var(--a),
-    #eee2 360deg
-  );
+  background-image: conic-gradient(transparent 0deg,
+      transparent var(--a),
+      #eee2 var(--a),
+      #eee2 360deg);
 }
 
 .player_ship.reloading::after {
@@ -86,4 +84,42 @@
 
 .enemy_ship.player_ship {
   background-color: red;
+}
+
+@keyframes advice {
+
+  0%,
+  100% {
+    bottom: 100lvh
+  }
+
+  40%,
+  60% {
+    bottom: 60lvh
+  }
+}
+
+.advice-gamer {
+  margin: 0 auto;
+}
+
+.advice-gamer:not(.anim) {
+  padding: .5rem 1rem;
+  background-color: #464646;
+  color: #646cff;
+  width: fit-content;
+  margin-bottom: 1rem;
+}
+
+.advice-gamer.anim {
+  background-color: #2a2a74;
+  padding: 2rem 4rem;
+  z-index: 1000;
+  pointer-events: none;
+
+  position: absolute;
+  bottom: 100lvh;
+  left: 0;
+  right: 0;
+  animation: advice 6s ease-in-out forwards;
 }

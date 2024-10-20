@@ -8,6 +8,7 @@ interface UseEnemyMovementProps {
   playerPos: number;
   sizeRow: number;
   initialEnemyPos: number[];
+  pause: boolean;
   dispatch: React.Dispatch<any>;
 }
 
@@ -19,11 +20,13 @@ export const useEnemyMovement = ({
   playerPos,
   sizeRow,
   initialEnemyPos,
+  pause,
   dispatch,
 }: UseEnemyMovementProps) => {
   const [frames, setFrames] = useState(0);
 
   const movEnemys = useCallback(() => {
+    if (playerPos == -1 || pause) return;
     setFrames((prevFrames) => prevFrames + 1);
     const needToSpawn = enemyPos[0][0] > 120;
     const existedGridEnemies = (pos: number) => pos < 600 && pos >= 0;
@@ -90,9 +93,10 @@ export const useEnemyMovement = ({
       type: "UPDATE_ENEMY_DIR",
       payload: newEnemiesDir,
     });
-  }, [frames, enemyPos]);
+  }, [frames, enemyPos, pause]);
 
   const movShoots = useCallback(() => {
+    if (pause) return;
     const existedGridShoots = (pos: number) => pos < 600 && pos >= 0;
 
     let newShootPos = shootPos.map((dir) => dir - sizeRow);
@@ -104,19 +108,19 @@ export const useEnemyMovement = ({
     newEnShootPos = newEnShootPos.filter(existedGridShoots);
 
     dispatch({ type: "SHOOT_ENEMIES", payload: newEnShootPos });
-  }, [shootPos, enemyShoot]);
+  }, [shootPos, enemyShoot, pause]);
 
   useEffect(() => {
     let movEnemysId: undefined | number;
     if (playerPos !== -1)
       movEnemysId = setInterval(movEnemys, Math.max(800 - frames / 2.5, 40));
     return () => clearInterval(movEnemysId);
-  }, [movEnemys, playerPos !== -1]);
+  }, [movEnemys, playerPos !== -1, pause]);
 
   useEffect(() => {
     let movShootsId: undefined | number;
     if (playerPos !== -1)
       movShootsId = setInterval(movShoots, Math.max(300 - frames / 5, 40));
     return () => clearInterval(movShootsId);
-  }, [movShoots]);
+  }, [movShoots, pause]);
 };

@@ -3,7 +3,7 @@ import { useUserContext } from "../context/userContext";
 import { FrontFetch } from "../utils/FrontFetch.ts";
 
 const LogoSL = () => {
-  const { setUser } = useUserContext();
+  const { setUser, setLikes, setRank, setScore, setShips } = useUserContext();
 
   const { pathname: path } = useLocation();
   const newTo = ["/main", "/signup", "/pixel", "/login", "/"].includes(path)
@@ -32,6 +32,10 @@ const LogoSL = () => {
       <button
         onClick={() => {
           setUser({});
+          setLikes([]);
+          setRank([]);
+          setScore({points: 0, playername: ""});
+          setShips([]);
           handleLogout();
         }}
       >

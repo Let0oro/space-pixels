@@ -13,7 +13,7 @@ const RankElement = lazy(
 );
 
 const UserMain = () => {
-  const { user, rank, setRank, ships, setShips, setScore } = useUserContext();
+  const { user, rank, setRank, ships, setShips } = useUserContext();
   const { element } = useDialogContext();
 
   const [newShip, setNewShip] = useState<boolean>(false);
@@ -62,7 +62,7 @@ const UserMain = () => {
         <ShipsList
           user={user}
           ships={ships}
-          player_selected={active_ship_id || 1}
+          player_selected={active_ship_id || 0}
         />
       </Suspense>
       <p

@@ -25,6 +25,7 @@ const Game: React.FC = () => {
   const navigation = useNavigate();
   const [state, dispatch] = useReducer(gameReducer, gameInitialState);
   const [isMobile, setIsMobile] = useState(false);
+  const [advice, setAdvice] = useState<boolean>();
 
   const sizeRow = 20;
   const sizeCol = 30;
@@ -123,6 +124,7 @@ const Game: React.FC = () => {
     playerPos: state.playerPos,
     sizeRow,
     initialEnemyPos,
+    pause: state.pause,
     dispatch,
   });
 
@@ -152,6 +154,11 @@ const Game: React.FC = () => {
     }
   }, [navigator.userAgent, window.matchMedia]);
 
+  useEffect(() => {
+    console.log({scPoints: score.points, stPoints: state.points, willSet: !score.points && !state.points})
+    if (!score.points && !state.points){ setAdvice(true)};
+  }, [score.points, state.points])
+
   if (!state.enemyPos.length || !ships.length) {
     return <div>Loading...</div>;
   }
@@ -177,6 +184,7 @@ const Game: React.FC = () => {
 
   return (
     <div>
+      {!isMobile && advice && <div className="advice-gamer anim">Remind you can use the arrow keys to move your ship</div>}
       <div>Points: {state.points}</div>
       <button
         style={{ fontSize: "clamp(.8rem, 2lvh, 1rem)" }}

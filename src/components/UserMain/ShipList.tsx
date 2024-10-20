@@ -82,9 +82,9 @@ const ShipsList = memo(
     };
 
     useEffect(() => {
-      if (!user.active_ship_id && user.id && ships.length && ships[0].ship_id)
+      if (!user.active_ship_id && !player_selected && user.id && ships.length && ships[0].ship_id)
         changeSelected(ships[0].ship_id);
-    }, [ships?.length, user?.id]);
+    }, [ships?.length, user?.id, player_selected]);
 
     return (
       <div style={{ display: "flex", gap: ".4rem" }}>
