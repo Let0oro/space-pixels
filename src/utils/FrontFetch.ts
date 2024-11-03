@@ -53,10 +53,10 @@ export class FrontFetch {
 
   private static async Fetch(url: string, opts = {}) {
     try {
-      const response = await fetch(url, { ...opts, mode: "cors" });
+      const response = await fetch(url, { ...opts, credentials: "include", mode: "cors" });
       const data = await response.json();
 
-      // console.log({ data, opts });
+      // console.log({ opts });
 
       if (!response.ok) {
         if (data.error) return data;
@@ -92,7 +92,6 @@ export class FrontFetch {
 
       opts.body = formData;
     }
-    opts.credentials = "include";
 
     const url = `${this.baseUrl}${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
     // console.log({ typeMethod, id, pMethod, opts, url });
