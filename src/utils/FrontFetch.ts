@@ -7,7 +7,7 @@ import {
 } from "../interfaces/FrontfetchInterface";
 
 export class FrontFetch {
-  private static baseUrl = "http://localhost:3001/api/";
+  private static baseUrl = "https://localhost:443/api/";
 
   public static parseMethod: parseMethodInterface = {
     player: {
