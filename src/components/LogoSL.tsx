@@ -25,6 +25,7 @@ const LogoSL = () => {
       method: "post",
       typeMethod: "logout",
     });
+    localStorage.clear();
   };
 
   const logoutDiv = (
