@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FrontFetch } from "../utils/FrontFetch";
 import { useUserContext } from "../context/userContext";
 
 const useSessionExpired = () => {
