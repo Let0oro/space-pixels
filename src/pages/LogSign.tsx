@@ -84,7 +84,13 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
         { name: "player", method: "post", typeMethod: type },
         data
       );
-      if (!datares.error) navigate(type == "register" ? "/pixel" : "/usermain");
+      // if (!datares.error) return navigate(type == "register" ? "/pixel" : "/usermain");
+      if (!datares.error) {
+        console.table({data, datares})
+        navigate(type == "register" ? "/pixel" : "/usermain");
+        localStorage.setItem("user", JSON.stringify(data))
+        return;
+      }
       setMessage(datares.error);
     } catch (error) {
       console.error({ error });
@@ -93,16 +99,24 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
 
   useEffect(() => {
     const getUserFromSession = async () => {
-      const { password: undefined, ...data } = await FrontFetch.caller({
-        name: "player",
-        method: "get",
-        typeMethod: "session",
-      });
-      if (!data.error) {
+      // const { password: undefined, ...data } = await FrontFetch.caller({
+      //   name: "player",
+      //   method: "get",
+      //   typeMethod: "session",
+      // });
+      // if (!data.error) {
+      //   setUser(data);
+      //   navigate("/usermain");
+      //   return;
+      // }
+      const strUser = localStorage.getItem("user");
+      const { password: undefined, ...data } = strUser ? JSON.parse(strUser) : {}
+      if (data) {
         setUser(data);
         navigate("/usermain");
         return;
       }
+      setUser(data);
       console.log({ error: data.error });
       setMessage(data.error);
     };
