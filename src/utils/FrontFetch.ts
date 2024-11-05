@@ -7,7 +7,6 @@ import {
 } from "../interfaces/FrontfetchInterface";
 
 export class FrontFetch {
-  // private static baseUrl = "https://localhost:443/api/";
   private static baseUrl = "http://localhost:3000/api/";
 
   public static parseMethod: parseMethodInterface = {
@@ -57,7 +56,6 @@ export class FrontFetch {
       const response = await fetch(url, { ...opts, credentials: "include", mode: "cors" });
       const data = await response.json();
 
-      // console.table({ url, opts, data });
 
       if (!response.ok) {
         if (data.error) return data;
@@ -95,7 +93,6 @@ export class FrontFetch {
     }
 
     const url = `${this.baseUrl}${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
-    // console.log({ typeMethod, id, pMethod, opts, url });
     return await this.Fetch(url, opts);
   }
 }

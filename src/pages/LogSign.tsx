@@ -8,7 +8,6 @@ import {
 import { FrontFetch } from "../utils/FrontFetch.ts";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/userContext";
-import useSessionExpired from "../hooks/useSessionExpired.tsx";
 
 type Inputs = {
   nameoremail?: string;
@@ -71,7 +70,7 @@ const PassInput = ({ register }: { register: UseFormRegister<Inputs> }) => (
 
 const LogSign = ({ type }: { type: "login" | "register" }) => {
   const navigate = useNavigate();
-  const [message, setMessage] = useState();
+  const [message, setMessage] = useState<string | undefined>();
   const {
     register,
     handleSubmit,
@@ -85,7 +84,6 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
         { name: "player", method: "post", typeMethod: type },
         data
       );
-      // if (!datares.error) return navigate(type == "register" ? "/pixel" : "/usermain");
       if (!datares.error) {
         localStorage.setItem("user", JSON.stringify(data))
         setUser(data)
@@ -100,25 +98,16 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
 
   useEffect(() => {
     const getUserFromSession = async () => {
-      // const { password: undefined, ...data } = await FrontFetch.caller({
-      //   name: "player",
-      //   method: "get",
-      //   typeMethod: "session",
-      // });
-      // if (!data.error) {
-      //   setUser(data);
-      //   navigate("/usermain");
-      //   return;
-      // }
+
       const strUser = localStorage.getItem("user");
       const { password: undefined, ...data } = strUser ? JSON.parse(strUser) : {}
       if (strUser && !user.name) {
         setUser(data);
         navigate("/usermain");
         return;
+      } else {
+        setMessage("session expired");
       }
-      console.log({ error: data.error });
-      setMessage(data.error);
     };
     if (!user.id && type == "register") getUserFromSession();
   }, []);

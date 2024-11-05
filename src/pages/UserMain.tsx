@@ -38,7 +38,6 @@ const UserMain = () => {
 
   useEffect(() => {
     const getShipsUser = async () => {
-      console.log("getShipsUser")
       const { id } = user;
       const response = await FrontFetch.caller({
         name: "ship",
@@ -46,7 +45,6 @@ const UserMain = () => {
         typeMethod: "get",
         id: `${id}`,
       });
-      console.log({responseAllShipsUser: response})
       setShips(response);
     };
     if (user.id) getShipsUser();

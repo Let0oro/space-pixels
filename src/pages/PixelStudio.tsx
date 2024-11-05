@@ -120,8 +120,6 @@ const PixelStudio = ({
 
   const confirmAvatar = async () => {
     console.clear();
-    console.log("confirmAvatar")
-    console.log({user})
     const secuence = pxArr.flat(1);
     const response = await FrontFetch.caller(
       { name: "ship", method: "post", typeMethod: "painted" },

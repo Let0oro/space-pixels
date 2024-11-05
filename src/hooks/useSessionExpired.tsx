@@ -9,17 +9,8 @@ const useSessionExpired = () => {
   useEffect(() => {
     const getUserFromSession = async () => {
       try {
-        // const { password: undefined, ...response } = await FrontFetch.caller({
-        //   name: "player",
-        //   method: "get",
-        //   typeMethod: "session",
-        // });
-        // console.log({ sessionResponse: response });
-        // if (response.error) navigate("/");
-        // setUser(response);
         const strUser = localStorage.getItem("user");
         const { password: undefined, ...response } = strUser ? JSON.parse(strUser) : {}
-        console.log({response})
         if (!strUser) return navigate("/");
         const [player] = await FrontFetch.caller({name: "player", method: "get", typeMethod: "get", id: response.name}) 
 

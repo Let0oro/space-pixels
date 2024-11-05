@@ -42,7 +42,6 @@ const Game: React.FC = () => {
     await FrontFetch.caller(
       { name: "score", method: "post" },
       { points: state.points, player: user }
-      // { points: state.points }
     );
     if (state.points >= 20)
       setUser({
@@ -156,7 +155,6 @@ const Game: React.FC = () => {
   }, [navigator.userAgent, window.matchMedia]);
 
   useEffect(() => {
-    console.log({scPoints: score.points, stPoints: state.points, willSet: !score.points && !state.points})
     if (!score.points && !state.points){ setAdvice(true)};
   }, [score.points, state.points])
 
