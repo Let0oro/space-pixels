@@ -41,7 +41,8 @@ const Game: React.FC = () => {
   const sumPoints = useCallback(async () => {
     await FrontFetch.caller(
       { name: "score", method: "post" },
-      { points: state.points }
+      { points: state.points, player: user }
+      // { points: state.points }
     );
     if (state.points >= 20)
       setUser({

@@ -29,6 +29,7 @@ const UserProfile = memo(() => {
         name: "ship",
         method: "get",
         typeMethod: "likedplayer",
+        id: `${user.id}`
       });
       if (response) setLikes(response);
     };
@@ -41,7 +42,7 @@ const UserProfile = memo(() => {
         name: "ship",
         method: "get",
         typeMethod: "publicplayer",
-        id: `${otherUserId}`,
+        id: `${otherUserId}/${user.id}`,
       });
       if (response) setShipsProf(response);
     };
@@ -60,7 +61,7 @@ const UserProfile = memo(() => {
       name: "player",
       method: "put",
       typeMethod: isCurrentFollowing ? "unfollow" : "follow",
-      id: `${shipsProf && shipsProf[0].id}`,
+      id: `${shipsProf && shipsProf[0].id}/${user.id}`,
     });
 
     if (responseFol) {
@@ -80,7 +81,7 @@ const UserProfile = memo(() => {
     }
   };
 
-  if ((shipsProf && shipsProf[0].id != otherUserId) || !shipsProf) {
+  if ((shipsProf && shipsProf[0]?.id != otherUserId) || !shipsProf) {
     return <h3>Loading player...</h3>;
   }
 

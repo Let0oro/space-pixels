@@ -25,7 +25,7 @@ const LogoSL = () => {
       method: "post",
       typeMethod: "logout",
     });
-    localStorage.clear();
+    localStorage.removeItem("user");
   };
 
   const logoutDiv = (

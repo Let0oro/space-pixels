@@ -12,6 +12,7 @@ import { TinyColor } from "@ctrl/tinycolor";
 import ShowAvatar from "../components/PixelStudio/ShowAvatar";
 import { FrontFetch } from "../utils/FrontFetch.ts";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useUserContext } from "../context/userContext.tsx";
 
 const SizeSelector = () => {
   const { size, setSize } = useCanvasAttributes();
@@ -112,16 +113,19 @@ const PixelStudio = ({
   setNewShip?: Dispatch<SetStateAction<boolean>>;
 }) => {
   const { pxArr, size, setPxArr } = useCanvasAttributes();
+  const {user} = useUserContext()
 
   const navigate = useNavigate();
   const { pathname: path } = useLocation();
 
   const confirmAvatar = async () => {
     console.clear();
+    console.log("confirmAvatar")
+    console.log({user})
     const secuence = pxArr.flat(1);
     const response = await FrontFetch.caller(
       { name: "ship", method: "post", typeMethod: "painted" },
-      { secuence }
+      { secuence, player: user }
     );
     if (response) {
       if (path == "/pixel") {

@@ -33,11 +33,12 @@ const UserMain = () => {
       }[];
       setRank(arrScore);
     };
-    getRanking();
+    if (user?.name) getRanking();
   }, [rank?.length, user.name]);
 
   useEffect(() => {
     const getShipsUser = async () => {
+      console.log("getShipsUser")
       const { id } = user;
       const response = await FrontFetch.caller({
         name: "ship",
@@ -45,10 +46,11 @@ const UserMain = () => {
         typeMethod: "get",
         id: `${id}`,
       });
+      console.log({responseAllShipsUser: response})
       setShips(response);
     };
     if (user.id) getShipsUser();
-  }, [user?.name, ships.length, newShip, element?.open]);
+  }, [user?.id, ships?.length, newShip, element?.open]);
 
   const { name, active_ship_id } = user;
   return (

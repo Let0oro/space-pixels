@@ -8,6 +8,7 @@ import {
 import { FrontFetch } from "../utils/FrontFetch.ts";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/userContext";
+import useSessionExpired from "../hooks/useSessionExpired.tsx";
 
 type Inputs = {
   nameoremail?: string;
@@ -86,9 +87,9 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
       );
       // if (!datares.error) return navigate(type == "register" ? "/pixel" : "/usermain");
       if (!datares.error) {
-        console.table({data, datares})
-        navigate(type == "register" ? "/pixel" : "/usermain");
         localStorage.setItem("user", JSON.stringify(data))
+        setUser(data)
+        navigate(type == "register" ? "/pixel" : "/usermain");
         return;
       }
       setMessage(datares.error);
@@ -111,17 +112,16 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
       // }
       const strUser = localStorage.getItem("user");
       const { password: undefined, ...data } = strUser ? JSON.parse(strUser) : {}
-      if (data) {
+      if (strUser && !user.name) {
         setUser(data);
         navigate("/usermain");
         return;
       }
-      setUser(data);
       console.log({ error: data.error });
       setMessage(data.error);
     };
     if (!user.id && type == "register") getUserFromSession();
-  }, [user]);
+  }, []);
 
   if (type == "login")
     return (

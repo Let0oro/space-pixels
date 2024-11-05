@@ -57,7 +57,7 @@ export class FrontFetch {
       const response = await fetch(url, { ...opts, credentials: "include", mode: "cors" });
       const data = await response.json();
 
-      // console.log({ opts });
+      // console.table({ url, opts, data });
 
       if (!response.ok) {
         if (data.error) return data;

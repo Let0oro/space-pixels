@@ -28,7 +28,7 @@ const CardShip = ({
   const addLike = async () => {
     const response = await FrontFetch.caller(
       { name: "ship", method: "post", typeMethod: "like", id: `${player_id}` },
-      { store_id }
+      { player: user, store_id }
     );
 
     if (response) {
@@ -36,12 +36,14 @@ const CardShip = ({
         name: "ship",
         method: "get",
         typeMethod: "likedplayer",
+         id: `${user.id}`
       });
       setLikes(newLikes);
     }
   };
 
   const purchaseShip = async () => {
+    if (user.coins == undefined || !price || ( user.coins - price < 0)) return;
     const response = await FrontFetch.caller(
       {
         name: "ship",
@@ -49,7 +51,7 @@ const CardShip = ({
         typeMethod: "purchase",
         id: `${player_id}`,
       },
-      { store_id, price }
+      { player: user, store_id, price }
     );
 
     if (response) {

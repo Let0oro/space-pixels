@@ -19,7 +19,7 @@ const ShipsList = memo(
     }[];
     player_selected?: number;
   }) => {
-    const { setLikes } = useUserContext();
+    const { user, setLikes } = useUserContext();
     const { element } = useDialogContext();
 
     useEffect(() => {
@@ -28,13 +28,14 @@ const ShipsList = memo(
           name: "ship",
           method: "get",
           typeMethod: "likedplayer",
+          id: `${user.id}`
         });
         if (response) setLikes(response);
       };
       getLikesPlayer();
     }, [element?.open]);
 
-    if (ships.length)
+    if (ships?.length)
       return (
         <div style={{ display: "flex" }}>
           <div
