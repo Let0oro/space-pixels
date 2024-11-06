@@ -7,7 +7,7 @@ import {
 } from "../interfaces/FrontfetchInterface";
 
 export class FrontFetch {
-  private static baseUrl = "http://localhost:3000/api/";
+  private static baseUrl = "https://space-pixels-api.onrender.com/api/";
 
   public static parseMethod: parseMethodInterface = {
     player: {
