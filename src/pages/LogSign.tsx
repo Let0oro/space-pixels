@@ -80,14 +80,11 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
-      console.log("SUBMIT")
       const datares = await FrontFetch.caller(
         { name: "player", method: "post", typeMethod: type },
         data
       );
-      console.log({ dataResPostRegLog: datares })
       if (!datares.error) {
-        console.log({ dataResPostRegLogError: datares.error })
         localStorage.setItem("user", JSON.stringify(data))
         setUser(data)
         if (type == "register") { navigate("/pixel") } else navigate("/usermain");
