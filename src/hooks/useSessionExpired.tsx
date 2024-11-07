@@ -11,6 +11,7 @@ const useSessionExpired = () => {
       try {
         const strUser = localStorage.getItem("user");
         const { password: undefined, ...response } = strUser ? JSON.parse(strUser) : {}
+        console.table({strUser, response})
         if (!strUser) return navigate("/");
         const [player] = await FrontFetch.caller({name: "player", method: "get", typeMethod: "get", id: response.name}) 
 
