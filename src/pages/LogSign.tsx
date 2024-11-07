@@ -87,7 +87,7 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
       if (!datares.error) {
         localStorage.setItem("user", JSON.stringify(data))
         setUser(data)
-        navigate(type == "register" ? "/pixel" : "/usermain");
+        if (type == "register") { navigate("/pixel") } else navigate("/usermain");
         return;
       }
       setMessage(datares.error);
