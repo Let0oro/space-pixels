@@ -80,10 +80,12 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
+      console.log({data})
       const datares = await FrontFetch.caller(
         { name: "player", method: "post", typeMethod: type },
         data
       );
+      console.log({datares})
       if (!datares.error) {
         localStorage.setItem("user", JSON.stringify(data))
         setUser(data)
