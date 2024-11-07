@@ -81,7 +81,11 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
 <<<<<<< HEAD
+<<<<<<< HEAD
       console.log({ data })
+=======
+      console.log({data})
+>>>>>>> 1378e8c8c7db7145b91c9d131241cafd6b144ef1
 =======
       console.log({data})
 >>>>>>> 1378e8c8c7db7145b91c9d131241cafd6b144ef1
@@ -90,7 +94,11 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
         data
       );
 <<<<<<< HEAD
+<<<<<<< HEAD
       console.log({ datares })
+=======
+      console.log({datares})
+>>>>>>> 1378e8c8c7db7145b91c9d131241cafd6b144ef1
 =======
       console.log({datares})
 >>>>>>> 1378e8c8c7db7145b91c9d131241cafd6b144ef1
