@@ -47,6 +47,7 @@ const RegularInput = ({
 const PassInput = ({ register }: { register: UseFormRegister<Inputs> }) => (
   <RegularInput title="password">
     <input
+      id="pass-inp"
       type="password"
       {...register("password", {
         required: "Password is required",
@@ -65,6 +66,11 @@ const PassInput = ({ register }: { register: UseFormRegister<Inputs> }) => (
         },
       })}
     />
+    <button className="btn-password" onClick={() => {
+      const inp: HTMLInputElement | null = document?.querySelector("#pass-inp");
+      if (inp != null) inp.type = (inp?.type == "password" ? "text" : "password")
+    }}
+    ><i className="fa fa-eye"></i></button>
   </RegularInput>
 );
 
