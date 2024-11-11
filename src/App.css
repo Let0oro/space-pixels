@@ -55,10 +55,15 @@ input:has(+.btn-password):hover+.btn-password,
   opacity: 1;
 }
 
-.btn-password {
-  opacity: 0;
+.btn-password,
+.btn-password:focus,
+.btn-password:active {
   border: 0;
   outline: 0;
+}
+
+.btn-password {
+  opacity: 0;
   height: .8rem;
   width: 1rem;
   padding: 0;

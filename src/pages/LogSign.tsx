@@ -73,8 +73,7 @@ const PassInput = ({ register }: { register: UseFormRegister<Inputs> }) => (
         const ty: string = inp?.type;
         inp.type = (ty == "password" ? "text" : "password")
         if (elem) {
-          const eye = elem.querySelector("i") as HTMLIFrameElement;
-          eye.className = (ty == "password" ? "fa-regular fa-eye" : "fa-regular fa-eye-slash")
+          if (elem?.className) elem.className = (ty == "password" ? "fa fa-eye" : "fa fa-eye-slash")
         }
       }
     }}
