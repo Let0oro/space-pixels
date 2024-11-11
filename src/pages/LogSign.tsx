@@ -73,7 +73,7 @@ const PassInput = ({ register }: { register: UseFormRegister<Inputs> }) => (
         const ty: string = inp?.type;
         inp.type = (ty == "password" ? "text" : "password")
         if (elem) {
-          if (elem?.className) elem.className = (ty == "password" ? "fa fa-eye" : "fa fa-eye-slash")
+          if (elem?.className) elem.className = (ty == "password" ? "fa fa-eye-slash" : "fa fa-eye")
         }
       }
     }}
