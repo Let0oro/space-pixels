@@ -61,7 +61,7 @@ const PassInput = ({ register }: { register: UseFormRegister<Inputs> }) => (
         },
         pattern: {
           message:
-            "The password must contain at least one lowercase letter, one uppercase letter, one number, and one punctuation symbol",
+            "The password must contain  lowercases, uppercases, numbers and punctuation",
           value: /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,24}/,
         },
       })}
@@ -72,9 +72,8 @@ const PassInput = ({ register }: { register: UseFormRegister<Inputs> }) => (
       if (inp != null) {
         const ty: string = inp?.type;
         inp.type = (ty == "password" ? "text" : "password")
-        if (elem) {
-          if (elem?.className) elem.className = (ty == "password" ? "fa fa-eye-slash" : "fa fa-eye")
-        }
+        if (elem && elem?.className)
+          elem.className = (ty == "password" ? "fa fa-eye-slash" : "fa fa-eye")
       }
     }}
     ><i className="fa fa-eye"></i></button>
@@ -99,7 +98,7 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
         { name: "player", method: "post", typeMethod: type },
         data
       );
-      setShowMessage(true);
+      setShowMessage(true)
       console.log({ datares })
       if (!datares.error) {
         localStorage.setItem("user", JSON.stringify(data))
@@ -130,7 +129,11 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
   }, []);
 
   useEffect(() => {
-    setTimeout(() => setShowMessage(false), 3000);
+    console.log({ showMessage })
+    if (showMessage) {
+      console.log("setShowMessageEffect")
+      setTimeout(() => setShowMessage(false), 3000);
+    }
   }, [showMessage])
 
   if (type == "login")
@@ -154,14 +157,14 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
             })}
           />
         </RegularInput>
-        {<ErrorSpan errorObj={errors.nameoremail} />}
+        {showMessage && <ErrorSpan errorObj={errors.nameoremail} />}
 
         <PassInput register={register} />
-        <ErrorSpan errorObj={errors.password} />
+        {showMessage && <ErrorSpan errorObj={errors.password} />}
         <hr style={{ margin: ".3rem 0", width: "100%" }} />
 
         {showMessage && message && <ErrorSpan errorObj={{ message }} />}
-        <input type="submit" />
+        <input type="submit" onClick={() => setShowMessage(true)} />
       </form>
     );
 
@@ -181,7 +184,7 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
         <RegularInput title="name">
           <input {...register("name", { required: "Name is required" })} />
         </RegularInput>
-        {<ErrorSpan errorObj={errors.name} />}
+        {showMessage && <ErrorSpan errorObj={errors.name} />}
 
         <RegularInput title="email">
           <input
@@ -191,16 +194,16 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
             })}
           />
         </RegularInput>
-        <ErrorSpan errorObj={errors.email} />
+        {showMessage && <ErrorSpan errorObj={errors.email} />}
 
         <PassInput register={register} />
-        <ErrorSpan errorObj={errors.password} />
+        {showMessage && <ErrorSpan errorObj={errors.password} />}
         <hr style={{ margin: ".3rem 0", width: "100%" }} />
 
         {showMessage && message && message !== "session expired or nonexistent" && (
           <ErrorSpan errorObj={{ message }} />
         )}
-        <input type="submit" />
+        <input type="submit" onClick={() => setShowMessage(true)} />
       </form>
     );
 };
