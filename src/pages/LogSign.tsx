@@ -66,9 +66,17 @@ const PassInput = ({ register }: { register: UseFormRegister<Inputs> }) => (
         },
       })}
     />
-    <button className="btn-password" onClick={() => {
+    <button className="btn-password" type="button" onClick={({ target }) => {
       const inp: HTMLInputElement | null = document?.querySelector("#pass-inp");
-      if (inp != null) inp.type = (inp?.type == "password" ? "text" : "password")
+      const elem = target as HTMLButtonElement | null
+      if (inp != null) {
+        const ty: string = inp?.type;
+        inp.type = (ty == "password" ? "text" : "password")
+        if (elem) {
+          const eye = elem.querySelector("i") as HTMLIFrameElement;
+          eye.className = (ty == "password" ? "fa-regular fa-eye" : "fa-regular fa-eye-slash")
+        }
+      }
     }}
     ><i className="fa fa-eye"></i></button>
   </RegularInput>
