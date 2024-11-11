@@ -71,6 +71,7 @@ const PassInput = ({ register }: { register: UseFormRegister<Inputs> }) => (
 const LogSign = ({ type }: { type: "login" | "register" }) => {
   const navigate = useNavigate();
   const [message, setMessage] = useState<string | undefined>();
+  const [showMessage, setShowMessage] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -85,6 +86,7 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
         { name: "player", method: "post", typeMethod: type },
         data
       );
+      setShowMessage(true);
       console.log({ datares })
       if (!datares.error) {
         localStorage.setItem("user", JSON.stringify(data))
@@ -141,7 +143,7 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
         <ErrorSpan errorObj={errors.password} />
         <hr style={{ margin: ".3rem 0", width: "100%" }} />
 
-        {message && <ErrorSpan errorObj={{ message }} />}
+        {showMessage && message && <ErrorSpan errorObj={{ message }} />}
         <input type="submit" />
       </form>
     );
@@ -178,7 +180,7 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
         <ErrorSpan errorObj={errors.password} />
         <hr style={{ margin: ".3rem 0", width: "100%" }} />
 
-        {message && message !== "session expired or nonexistent" && (
+        {showMessage && message && message !== "session expired or nonexistent" && (
           <ErrorSpan errorObj={{ message }} />
         )}
         <input type="submit" />
