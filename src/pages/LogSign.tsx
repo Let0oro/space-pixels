@@ -116,6 +116,10 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
     if (!user.id && type == "register") getUserFromSession();
   }, []);
 
+  useEffect(() => {
+    setTimeout(() => setShowMessage(false), 3000);
+  }, [showMessage])
+
   if (type == "login")
     return (
       <form
