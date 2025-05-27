@@ -69,7 +69,8 @@ input:has(+.btn-password):hover+.btn-password,
   padding: 0;
   background-color: transparent;
   position: absolute;
-  translate: -1.5rem .2rem;
+  translate: -0.25rem -0.2rem;
+  right: 0;
 
   i {
     height: 100%;

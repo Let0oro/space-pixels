@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/userContext";
 import { FrontFetch } from "../utils/FrontFetch";
 
-const useSessionExpired = () => {
+const useSessionExpired = async () => {
   const { user, setUser } = useUserContext();
   const navigate = useNavigate();
   useEffect(() => {
@@ -11,13 +11,29 @@ const useSessionExpired = () => {
       try {
         const strUser = localStorage.getItem("user");
         const { password: undefined, ...response } = strUser ? JSON.parse(strUser) : {}
-        if (!strUser) return navigate("/");
-        const [player] = await FrontFetch.caller({ name: "player", method: "get", typeMethod: "get", id: response?.name ? response?.name : response?.nameoremail })
 
-        setUser(player);
-        localStorage.setItem("user", JSON.stringify({ name: player.name, id: player.id, email: player.email }))
+        if (!response?.name && !response?.nameoremail) return;
+        if (!strUser) return navigate("/");
+        const [player] = await FrontFetch.caller({
+          name: "player",
+          method: "get",
+          typeMethod: "get",
+          id: response?.name
+            ? response?.name
+            : response?.nameoremail
+        })
+
+
+        if (!user?.id || !user?.name || !user?.active_ship_id) setUser(player);
+
+        let parseUserLocalStorage: any = localStorage.getItem("user");
+        parseUserLocalStorage = parseUserLocalStorage ? JSON.parse(parseUserLocalStorage) : {};
+
+        if (parseUserLocalStorage?.name || parseUserLocalStorage?.id || parseUserLocalStorage?.active_ship_id) {
+          localStorage.setItem("user", JSON.stringify({ password: undefined, ...player }))
+        }
       } catch (error) {
-        console.error({ error });
+
         navigate("/");
       }
     };

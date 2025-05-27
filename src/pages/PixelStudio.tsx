@@ -4,6 +4,7 @@ import {
   Dispatch,
   SetStateAction,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -113,13 +114,12 @@ const PixelStudio = ({
   setNewShip?: Dispatch<SetStateAction<boolean>>;
 }) => {
   const { pxArr, size, setPxArr } = useCanvasAttributes();
-  const {user} = useUserContext()
+  const { user } = useUserContext()
 
   const navigate = useNavigate();
   const { pathname: path } = useLocation();
 
   const confirmAvatar = async () => {
-    console.clear();
     const secuence = pxArr.flat(1);
     const response = await FrontFetch.caller(
       { name: "ship", method: "post", typeMethod: "painted" },
@@ -135,7 +135,7 @@ const PixelStudio = ({
     }
   };
 
-  useMemo(() => {
+  useEffect(() => {
     if (pxArr.length != size)
       setPxArr(Array(size).fill(Array(size).fill("#0000")));
   }, [size]);

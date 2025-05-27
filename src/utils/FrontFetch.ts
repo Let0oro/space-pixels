@@ -7,7 +7,8 @@ import {
 } from "../interfaces/FrontfetchInterface";
 
 export class FrontFetch {
-  private static baseUrl = "https://space-pixels-api.onrender.com/api/";
+  // private static baseUrl = "https://space-pixels-api.onrender.com/api/";
+  private static baseUrl = "http://localhost:3000/";
 
   public static parseMethod: parseMethodInterface = {
     player: {
@@ -56,11 +57,12 @@ export class FrontFetch {
       const response = await fetch(url, { ...opts, credentials: "include", mode: "cors" });
       const data = await response.json();
 
-
       if (!response.ok) {
         if (data.error) return data;
         throw new Error(data.error || "Error en la solicitud");
       }
+
+      
 
       return data;
     } catch (error) {
@@ -92,7 +94,10 @@ export class FrontFetch {
       opts.body = formData;
     }
 
-    const url = `${this.baseUrl}${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
+    
+    const url = `${this.baseUrl}api/${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
+    // const url = `${this.baseUrl}${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
+    
     return await this.Fetch(url, opts);
   }
 }

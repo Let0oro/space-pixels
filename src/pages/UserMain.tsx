@@ -45,12 +45,19 @@ const UserMain = () => {
         typeMethod: "get",
         id: `${id}`,
       });
+
       setShips(response);
     };
+
     if (user.id) getShipsUser();
   }, [user?.id, ships?.length, newShip, element?.open]);
 
   const { name, active_ship_id } = user;
+
+
+
+  if (!name) return <h2>Loading...</h2>;
+
   return (
     <>
       <Dialog />
