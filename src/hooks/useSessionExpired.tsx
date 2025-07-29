@@ -16,7 +16,7 @@ const useSessionExpired = async () => {
         console.log({strUser});
         console.log("strsee");
         if (!strUser) return navigate("/");
-        const [player] = await FrontFetch.caller({
+        const player = await FrontFetch.caller({
           name: "player",
           method: "get",
           typeMethod: "get",
