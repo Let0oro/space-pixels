@@ -13,6 +13,8 @@ const useSessionExpired = async () => {
         const { password: undefined, ...response } = strUser ? JSON.parse(strUser) : {}
 
         if (!response?.name && !response?.nameoremail) return;
+        console.log({strUser});
+        console.log("strsee");
         if (!strUser) return navigate("/");
         const [player] = await FrontFetch.caller({
           name: "player",
