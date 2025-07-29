@@ -23,7 +23,8 @@ const useSessionExpired = async () => {
           id: response?.name
             ? response?.name
             : response?.nameoremail
-        })
+        });
+        console.log({player});
 
 
         if (!user?.id || !user?.name || !user?.active_ship_id) setUser(player);
