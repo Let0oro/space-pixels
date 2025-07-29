@@ -35,7 +35,7 @@ const useSessionExpired = async () => {
           localStorage.setItem("user", JSON.stringify({ password: undefined, ...player }))
         }
       } catch (error) {
-
+        console.warn({error});
         navigate("/");
       }
     };
