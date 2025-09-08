@@ -1,139 +1,128 @@
-import { lazy, Suspense, useEffect, useState } from "react";
-import { FrontFetch } from "../utils/FrontFetch.ts";
-import { Link } from "react-router-dom";
-import PixelStudio from "./PixelStudio";
-import { useUserContext } from "../context/userContext";
-import Dialog from "../components/Dialog";
-import { useDialogContext } from "../context/dialogContext";
-import useSessionExpired from "../hooks/useSessionExpired.tsx";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FrontFetch } from '../utils/FrontFetch';
+import { useUserContext } from '../context/userContext';
+import { useDialogContext } from '../context/dialogContext';
+import useSessionExpired from '../hooks/useSessionExpired';
 
-const ShipsList = lazy(() => import("../components/UserMain/ShipList.tsx"));
-const RankElement = lazy(
-  () => import("../components/UserMain/RankElement.tsx")
-);
+import {
+  DashboardHeader,
+  DashboardActions,
+  ShipsCollection,
+  Rankings
+} from '../components/organisms';
+import Dialog from '../components/Dialog';
 
-const UserMain = () => {
-  const { user, rank, setRank, ships, setShips } = useUserContext();
+/**
+ * UserMain component
+ * 
+ * Represents the user dashboard page, displaying user info,
+ * ships collection, actions, and rankings.
+ */
+const UserMain: React.FC = () => {
+  const navigate = useNavigate();
+  const { user, ships, setShips, following, setRank, rank, setFollowing } = useUserContext();
   const { element } = useDialogContext();
 
-  const [newShip, setNewShip] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [showFollowingTab, setShowFollowingTab] = useState<'following' | 'ranks'>('following');
+  const [newShipFlag, setNewShipFlag] = useState<boolean>(false);
 
   useSessionExpired();
 
   useEffect(() => {
-    const getRanking = async () => {
-      const { password: undefined, ...response } = await FrontFetch.caller({
-        name: "score",
-        method: "get",
-        typeMethod: "get",
-      });
-      const arrScore = Object.values(response) as {
-        points: number;
-        playername: string;
-      }[];
-      setRank(arrScore);
+    const checkAndFetchData = async () => {
+      setIsLoading(true);
+      try {
+        if (user.id) {
+          const followingResp = await FrontFetch.caller({
+            name: 'player',
+            method: 'get',
+            typeMethod: 'followings',
+            id: `${user.id}`,
+          });
+          setFollowing(followingResp);
+          const rankResp = await FrontFetch.caller({
+            name: 'player',
+            method: 'get',
+            typeMethod: 'ranks',
+          });
+          setRank(rankResp);
+          const shipsResp = await FrontFetch.caller({
+            name: 'ship',
+            method: 'get',
+            typeMethod: 'usership',
+            id: `${user.id}`,
+          });
+          setShips(shipsResp);
+          setErrorMsg(null);
+        }
+      } catch (error) {
+        setErrorMsg("Failed to load user data. Please try again later.");
+      }
+      setIsLoading(false);
     };
-    if (user?.name) getRanking();
-  }, [rank?.length, user.name]);
 
-  useEffect(() => {
-    const getShipsUser = async () => {
-      const { id } = user;
-      const response = await FrontFetch.caller({
-        name: "ship",
-        method: "get",
-        typeMethod: "get",
-        id: `${id}`,
-      });
+    checkAndFetchData();
+  }, [user.id, setFollowing, setRank, setShips, newShipFlag, element?.open]);
 
-      setShips(response);
-    };
+  const handlePlayGame = () => {
+    if (!user.active_ship_id) {
+      setErrorMsg("You need to select a ship to play. Please choose one from your collection.");
+      return;
+    }
+    navigate('/game');
+  };
 
-    if (user.id) getShipsUser();
-  }, [user?.id, ships?.length, newShip, element?.open]);
-
-  const { name, active_ship_id } = user;
-
-
-
-  if (!name) return <h2>Loading...</h2>;
+  const handleDismissError = () => setErrorMsg(null);
 
   return (
     <>
       <Dialog />
-      <h2>
-        Welcome <span style={{ color: "#535BF2" }}>{name}</span>!
-      </h2>
-      <h4>Your ships collection</h4>
-      <Suspense fallback={<h4>Loading player ships...</h4>}>
-        <ShipsList
-          user={user}
-          ships={ships}
-          player_selected={active_ship_id || 0}
+      <div className="container">
+        <DashboardHeader 
+          title={`Welcome back, ${user.name || 'Player'}!`} 
+          showCoins={true} 
+          showLastLogin={true}
+          isLoading={isLoading}
+          error={errorMsg}
+          onErrorClear={handleDismissError}
         />
-      </Suspense>
-      <p
-        style={{
-          display: "flex",
-          gap: "4px",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          alignItems: "center",
-          fontSize: "clamp(.9rem, 2.5lvw, 1rem)",
-        }}
-      >
-        Legend:{" "}
-        <span style={{ backgroundColor: "green", padding: "4px 2px" }}>
-          Published
-        </span>{" "}
-        <span style={{ backgroundColor: "gray", padding: "4px 2px" }}>
-          Unpublished
-        </span>{" "}
-        <span style={{ border: "1px solid green", padding: "4px 2px" }}>
-          Current selected
-        </span>
-      </p>
-      <Link to="/shop" className="link_shop">
-        Shop
-      </Link>
 
-      <Link
-        to={user.active_ship_id ? "/game" : ""}
-        style={{
-          ...{ display: "block", width: "100%" },
-          ...(!user.active_ship_id ? { filter: "grayscale(10)" } : {}),
-        }}
-      >
-        <h3 className="button_play">Play</h3>
-      </Link>
-      {!user.active_ship_id && (
-        <p style={{ margin: 0, color: "crimson" }}>
-          You need a ship to play, please, select a ship from your collection
-        </p>
-      )}
+        <ShipsCollection
+          ships={ships}
+          isLoading={isLoading}
+          error={errorMsg}
+          onErrorClear={handleDismissError}
+          activeShipId={user.active_ship_id || 0}
+          showCreateButton={true}
+          onCreateShip={() => setNewShipFlag(!newShipFlag)}
+        />
 
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          maxWidth: "780px",
-          gap: "2rem",
-          justifyContent: "center",
-        }}
-      >
-        <div>
-          <h4 style={{ margin: 0 }}>Give a spot to your ranking</h4>
+        <DashboardActions
+          showPlayButton={true}
+          showShopButton={true}
+          showStudioButton={true}
+          isShipSelected={!!user.active_ship_id}
+          onPlay={handlePlayGame}
+          onShop={() => navigate('/shop')}
+          onStudio={() => navigate('/pixel')}
+          error={errorMsg}
+          onErrorClear={handleDismissError}
+        />
 
-          <Suspense fallback={<h4>Loading rank list...</h4>}>
-            <RankElement currUser={name} rank={rank} />
-          </Suspense>
-        </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <h4 style={{ margin: 0 }}>Create a new ship</h4>
-          <div style={{ width: "360px" }}>
-            <PixelStudio title={false} setNewShip={setNewShip} />
-          </div>
-        </div>
+        <Rankings
+          rankings={rank}
+          following={following}
+          currentUserName={user.name || ''}
+          currentUserId={user.id || 0}
+          isLoading={isLoading}
+          error={errorMsg}
+          onErrorClear={handleDismissError}
+          showTabs={true}
+          title="Player Rankings"
+        />
       </div>
     </>
   );
