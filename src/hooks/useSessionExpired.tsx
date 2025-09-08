@@ -13,15 +13,18 @@ const useSessionExpired = async () => {
         const { password: undefined, ...response } = strUser ? JSON.parse(strUser) : {}
 
         if (!response?.name && !response?.nameoremail) return;
+        console.log({strUser});
+        console.log("strsee");
         if (!strUser) return navigate("/");
-        const [player] = await FrontFetch.caller({
+        const player = await FrontFetch.caller({
           name: "player",
           method: "get",
           typeMethod: "get",
           id: response?.name
             ? response?.name
             : response?.nameoremail
-        })
+        });
+        console.log({player});
 
 
         if (!user?.id || !user?.name || !user?.active_ship_id) setUser(player);
@@ -33,7 +36,7 @@ const useSessionExpired = async () => {
           localStorage.setItem("user", JSON.stringify({ password: undefined, ...player }))
         }
       } catch (error) {
-
+        console.warn({error});
         navigate("/");
       }
     };
