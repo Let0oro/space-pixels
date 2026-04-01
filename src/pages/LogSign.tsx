@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useReducer } from "react";
 import {
   useForm,
   SubmitHandler,
@@ -9,12 +9,43 @@ import { FrontFetch } from "../utils/FrontFetch.ts";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/userContext";
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
 type Inputs = {
   nameoremail?: string;
   name?: string;
   email?: string;
   password: string;
 };
+
+/** Auth state machine states */
+type AuthState =
+  | { status: "checking" }
+  | { status: "guest" }
+  | { status: "loading" }
+  | { status: "error"; message: string };
+
+type AuthAction =
+  | { type: "SESSION_VALID" }
+  | { type: "NO_SESSION" }
+  | { type: "SUBMIT" }
+  | { type: "SUCCESS" }
+  | { type: "ERROR"; message: string }
+  | { type: "RESET" };
+
+function authReducer(_state: AuthState, action: AuthAction): AuthState {
+  switch (action.type) {
+    case "SESSION_VALID": return { status: "checking" }; // stays while navigate runs
+    case "NO_SESSION": return { status: "guest" };
+    case "SUBMIT": return { status: "loading" };
+    case "SUCCESS": return { status: "loading" }; // stays while navigate runs
+    case "ERROR": return { status: "error", message: action.message };
+    case "RESET": return { status: "guest" };
+    default: return { status: "guest" };
+  }
+}
+
+// ─── Sub-components ──────────────────────────────────────────────────────────
 
 interface ErrorSpanProps {
   errorObj: FieldError | { message: string } | undefined;
@@ -45,29 +76,20 @@ const PassInput = ({
   clearErrors: (name?: keyof Inputs) => void;
 }) => (
   <RegularInput title="password" flex>
-    <div style={{
-      display: "flex", alignItems: "center", position: "relative"
-    }}>
+    <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
       <input
         id="pass-inp"
         type="password"
+        autoComplete="current-password"
         {...register("password", {
           required: "Password is required",
-          minLength: {
-            value: 8,
-            message: "At least 8 characters",
-          },
-          maxLength: {
-            value: 24,
-            message: "At most 24 characters",
-          },
+          minLength: { value: 8, message: "At least 8 characters" },
+          maxLength: { value: 24, message: "At most 24 characters" },
           pattern: {
             value: /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])/,
             message: "Must include lower, upper, number, symbol",
           },
-          onChange: () => {
-            clearErrors("password");
-          },
+          onChange: () => { clearErrors("password"); },
         })}
       />
       <button
@@ -91,10 +113,13 @@ const PassInput = ({
   </RegularInput>
 );
 
+// ─── Main Component ───────────────────────────────────────────────────────────
+
 const LogSign = ({ type }: { type: "login" | "register" }) => {
   const navigate = useNavigate();
-  const [message, setMessage] = useState<string | undefined>();
   const { user, setUser } = useUserContext();
+
+  const [authState, dispatch] = useReducer(authReducer, { status: "checking" });
 
   const {
     register,
@@ -103,60 +128,91 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
     clearErrors,
   } = useForm<Inputs>();
 
-  const [showMessage, setShowMessage] = useState<boolean>(false);
+  // ── Session check on mount ────────────────────────────────────────────────
+  useEffect(() => {
+    if (user.id) {
+      dispatch({ type: "SESSION_VALID" });
+      navigate("/usermain");
+      return;
+    }
 
+    const strUser = localStorage.getItem("user");
+    if (!strUser) {
+      dispatch({ type: "NO_SESSION" });
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(strUser);
+      if (parsed?.id) {
+        const { password: _pw, ...safeData } = parsed;
+        setUser(safeData);
+        dispatch({ type: "SESSION_VALID" });
+        navigate("/usermain");
+      } else {
+        // Corrupt/stale data (raw form inputs saved by old bug) — clear it
+        localStorage.removeItem("user");
+        dispatch({ type: "NO_SESSION" });
+      }
+    } catch {
+      localStorage.removeItem("user");
+      dispatch({ type: "NO_SESSION" });
+    }
+  }, []);
+
+  // ── Submit handler ────────────────────────────────────────────────────────
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    dispatch({ type: "SUBMIT" });
     try {
       const res = await FrontFetch.caller(
         { name: "player", method: "post", typeMethod: type },
         data
       );
       if (!res.error) {
-        setMessage("Loading...");
-        localStorage.setItem("user", JSON.stringify(data));
-        setUser(data);
-        navigate(type === "register" ? "/pixel" : "/usermain");
+        if (type === "register") {
+          // Register only returns a message; auto-login to get the session cookie
+          const loginRes = await FrontFetch.caller(
+            { name: "player", method: "post", typeMethod: "login" },
+            { nameoremail: data.name ?? data.email, password: data.password }
+          );
+          if (!loginRes.error) {
+            // Store form identifiers (no password) so useSessionExpired can fetch the real user
+            const { password: _pw, ...identifiers } = data;
+            localStorage.setItem("user", JSON.stringify(identifiers));
+            dispatch({ type: "SUCCESS" });
+            navigate("/pixel");
+          } else {
+            dispatch({ type: "ERROR", message: "Registered! Please log in manually." });
+          }
+        } else {
+          // Login: store form identifiers so useSessionExpired can fetch the real user
+          const { password: _pw, ...identifiers } = data;
+          localStorage.setItem("user", JSON.stringify(identifiers));
+          dispatch({ type: "SUCCESS" });
+          navigate("/usermain");
+        }
       } else {
-        setMessage(res.error);
-        setShowMessage(true);
+        dispatch({ type: "ERROR", message: res.error });
       }
-    } catch (error) {
-
-      setMessage("Unexpected error occurred");
-      setShowMessage(true);
+    } catch {
+      dispatch({ type: "ERROR", message: "Unexpected error occurred" });
     }
   };
 
   const handleInputChange = (field: keyof Inputs) => () => {
     clearErrors(field);
-    setMessage(undefined);
-    setShowMessage(false);
+    if (authState.status === "error") dispatch({ type: "RESET" });
   };
 
-  useEffect(() => {
-    const strUser = localStorage.getItem("user");
-    const { password: _, ...data } = strUser ? JSON.parse(strUser) : {};
-    if (!user.id && !user.name && !strUser) {
-      setMessage("Loading...");
-      return;
-    }
-    if (strUser && !user.name) {
-      setUser({ ...data });
-      navigate("/usermain");
-    } else {
-      setMessage("session expired");
-    }
-  }, []);
+  // ── Render ────────────────────────────────────────────────────────────────
 
+  const isLoading = authState.status === "loading";
 
   return (
-    <form style={{
-      display: "flex",
-      maxWidth: "400px",
-      flexDirection: "column",
-      gap: "0.5rem",
-      alignItems: "end",
-    }} onSubmit={handleSubmit(onSubmit)}>
+    <form
+      style={{ display: "flex", maxWidth: "400px", flexDirection: "column", gap: "0.5rem", alignItems: "end" }}
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <h3>{type === "register" ? "Sign Up" : "Login"}</h3>
 
       {type === "login" ? (
@@ -164,52 +220,57 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
           <RegularInput title="name or email">
             <input
               type="text"
+              autoComplete="username"
               {...register("nameoremail", {
                 required: "Name or Email is required",
                 onChange: handleInputChange("nameoremail"),
               })}
             />
           </RegularInput>
-          {showMessage && <ErrorSpan errorObj={errors.nameoremail} />}
+          <ErrorSpan errorObj={errors.nameoremail} />
         </>
       ) : (
         <>
           <RegularInput title="name">
             <input
+              autoComplete="username"
               {...register("name", {
                 required: "Name is required",
                 onChange: handleInputChange("name"),
               })}
             />
           </RegularInput>
-          {showMessage && <ErrorSpan errorObj={errors.name} />}
+          <ErrorSpan errorObj={errors.name} />
 
           <RegularInput title="email">
             <input
+              autoComplete="email"
               {...register("email", {
                 required: "Email is required",
-                pattern: {
-                  value: /^\S+@\S+\.\S+$/,
-                  message: "Invalid email format",
-                },
+                pattern: { value: /^\S+@\S+\.\S+$/, message: "Invalid email format" },
                 onChange: handleInputChange("email"),
               })}
             />
           </RegularInput>
-          {showMessage && <ErrorSpan errorObj={errors.email} />}
+          <ErrorSpan errorObj={errors.email} />
         </>
       )}
 
       <PassInput register={register} clearErrors={clearErrors} />
-      {showMessage && <ErrorSpan errorObj={errors.password} />}
+      <ErrorSpan errorObj={errors.password} />
 
       <hr style={{ margin: ".3rem 0", width: "100%" }} />
 
-      {showMessage && message && message !== "session expired" && (
-        <ErrorSpan errorObj={{ message }} />
+      {authState.status === "error" && (
+        <ErrorSpan errorObj={{ message: authState.message }} />
       )}
 
-      <input type="submit" value={type === "register" ? "Register" : "Login"} />
+      <input
+        type="submit"
+        style={{ cursor: isLoading ? "wait" : "pointer", opacity: isLoading ? 0.6 : 1 }}
+        disabled={isLoading}
+        value={isLoading ? "..." : type === "register" ? "Register" : "Login"}
+      />
     </form>
   );
 };

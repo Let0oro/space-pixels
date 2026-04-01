@@ -62,7 +62,7 @@ export class FrontFetch {
         throw new Error(data.error || "Error en la solicitud");
       }
 
-      
+
 
       return data;
     } catch (error) {
@@ -94,10 +94,10 @@ export class FrontFetch {
       opts.body = formData;
     }
 
-    
-    const url = `${this.baseUrl}api/${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
+
+    const url = `${this.baseUrl}${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
     // const url = `${this.baseUrl}${name}${typeMethod ? typePMethod : pMethod}${id || ""}`;
-    
+
     return await this.Fetch(url, opts);
   }
 }

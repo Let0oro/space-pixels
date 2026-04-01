@@ -5,7 +5,6 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import { MuiColorInput } from "mui-color-input";
@@ -14,6 +13,7 @@ import ShowAvatar from "../components/PixelStudio/ShowAvatar";
 import { FrontFetch } from "../utils/FrontFetch.ts";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/userContext.tsx";
+import useSessionExpired from "../hooks/useSessionExpired.tsx";
 
 const SizeSelector = () => {
   const { size, setSize } = useCanvasAttributes();
@@ -60,9 +60,9 @@ const SizeSelector = () => {
 const ColorInput = () => {
   const { clr, setClr } = useCanvasAttributes();
 
-  useMemo(() => {
+  useEffect(() => {
     const tinyClr = new TinyColor(clr);
-    if (tinyClr.format != "hex8") setClr(tinyClr.toHex8String());
+    if (tinyClr.format !== "hex8") setClr(tinyClr.toHex8String());
   }, [clr]);
 
   const clrTransp = useCallback(
@@ -118,8 +118,13 @@ const PixelStudio = ({
 
   const navigate = useNavigate();
   const { pathname: path } = useLocation();
+  useSessionExpired();
 
   const confirmAvatar = async () => {
+    if (!user?.id) {
+      alert("Still loading user data, please wait a moment and try again.");
+      return;
+    }
     const secuence = pxArr.flat(1);
     const response = await FrontFetch.caller(
       { name: "ship", method: "post", typeMethod: "painted" },
@@ -163,7 +168,13 @@ const PixelStudio = ({
       {title || <SizeSelector />}
       <div style={styles.finalDiv}>
         <ShowAvatar />
-        <button onClick={confirmAvatar}>Confirm avatar</button>
+        <button
+          onClick={confirmAvatar}
+          disabled={!user?.id}
+          style={{ opacity: user?.id ? 1 : 0.4, cursor: user?.id ? "pointer" : "not-allowed" }}
+        >
+          {user?.id ? "Confirm avatar" : "Loading user..."}
+        </button>
       </div>
     </div>
   );

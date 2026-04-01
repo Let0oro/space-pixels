@@ -1,10 +1,10 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/userContext";
 import { FrontFetch } from "../utils/FrontFetch.ts";
 
 const LogoSL = () => {
   const { setUser, setLikes, setRank, setScore, setShips } = useUserContext();
-
+  const navigate = useNavigate();
   const { pathname: path } = useLocation();
   const newTo = ["/main", "/signup", "/pixel", "/login", "/"].includes(path)
     ? "/"
@@ -26,21 +26,18 @@ const LogoSL = () => {
       typeMethod: "logout",
     });
     localStorage.removeItem("user");
+    setUser({});
+    setLikes([]);
+    setRank([]);
+    setScore({ points: 0, playername: "" });
+    setShips([]);
+    navigate("/");
   };
 
   const logoutDiv = (
     <div style={{ ...styles.logRegDiv, position: "absolute" }}>
-      <button
-        onClick={() => {
-          setUser({});
-          setLikes([]);
-          setRank([]);
-          setScore({points: 0, playername: ""});
-          setShips([]);
-          handleLogout();
-        }}
-      >
-        <Link to="/">Logout</Link>
+      <button onClick={handleLogout}>
+        Logout
       </button>
     </div>
   );
