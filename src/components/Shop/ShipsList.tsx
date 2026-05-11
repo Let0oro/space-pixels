@@ -30,7 +30,7 @@ const ShipsList = memo(
           typeMethod: "likedplayer",
           id: `${user.id}`
         });
-        if (response) setLikes(response);
+        if (response) setLikes(Array.isArray(response) ? response : Object.values(response));
       };
       getLikesPlayer();
     }, [element?.open]);

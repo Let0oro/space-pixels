@@ -120,6 +120,17 @@ const PixelStudio = ({
   const { pathname: path } = useLocation();
   useSessionExpired();
 
+  // Guard: standalone /pixel is only for post-signup onboarding.
+  // If there's no onboarding flag AND no live session, send back to /signup.
+  useEffect(() => {
+    if (path === "/pixel") {
+      const hasFlag = !!sessionStorage.getItem("sp_onboarding");
+      if (!hasFlag && !user?.id) {
+        navigate("/signup", { replace: true });
+      }
+    }
+  }, []);
+
   const confirmAvatar = async () => {
     if (!user?.id) {
       alert("Still loading user data, please wait a moment and try again.");
@@ -131,6 +142,7 @@ const PixelStudio = ({
       { secuence, player: user }
     );
     if (response) {
+      sessionStorage.removeItem("sp_onboarding");
       if (path == "/pixel") {
         navigate("/usermain");
       } else {
@@ -173,7 +185,7 @@ const PixelStudio = ({
           disabled={!user?.id}
           style={{ opacity: user?.id ? 1 : 0.4, cursor: user?.id ? "pointer" : "not-allowed" }}
         >
-          {user?.id ? "Confirm avatar" : "Loading user..."}
+          {user?.id ? "Confirm avatar" : "⏳ Loading session..."}
         </button>
       </div>
     </div>

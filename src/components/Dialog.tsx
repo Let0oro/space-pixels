@@ -31,7 +31,7 @@ const UserProfile = memo(() => {
         typeMethod: "likedplayer",
         id: `${user.id}`
       });
-      if (response) setLikes(response);
+      if (response) setLikes(Array.isArray(response) ? response : Object.values(response));
     };
     getLikesPlayer();
   }, [type, element?.open]);

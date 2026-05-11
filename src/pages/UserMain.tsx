@@ -86,7 +86,7 @@ const UserMain: React.FC = () => {
       <Dialog />
       <div className="container">
         <DashboardHeader
-          title={`Welcome back, ${user.name || 'Player'}!`}
+          title={`Welcome back, `}
           showCoins={true}
           isLoading={isLoading && !user.name}
           error={errorMsg}

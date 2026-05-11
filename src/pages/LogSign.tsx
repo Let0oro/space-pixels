@@ -179,6 +179,7 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
             // Store form identifiers (no password) so useSessionExpired can fetch the real user
             const { password: _pw, ...identifiers } = data;
             localStorage.setItem("user", JSON.stringify(identifiers));
+            sessionStorage.setItem("sp_onboarding", "1");
             dispatch({ type: "SUCCESS" });
             navigate("/pixel");
           } else {

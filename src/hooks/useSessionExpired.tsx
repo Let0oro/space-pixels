@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/userContext";
 import { FrontFetch } from "../utils/FrontFetch";
 
-const useSessionExpired = async () => {
+const useSessionExpired = () => {
   const { user, setUser } = useUserContext();
   const navigate = useNavigate();
   useEffect(() => {
@@ -28,7 +28,7 @@ const useSessionExpired = async () => {
 
 
         const playerData = Array.isArray(player) ? player[0] : (player?.player?.[0] ?? player);
-        if (!user?.id || !user?.name || !user?.active_ship_id) setUser(playerData);
+        if (playerData?.id) setUser(playerData);
 
         let parseUserLocalStorage: any = localStorage.getItem("user");
         parseUserLocalStorage = parseUserLocalStorage ? JSON.parse(parseUserLocalStorage) : {};

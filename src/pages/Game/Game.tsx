@@ -27,6 +27,13 @@ const Game: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [advice, setAdvice] = useState<boolean>();
 
+  // Guard: block mid-onboarding users — they must create their first ship before playing.
+  useEffect(() => {
+    if (sessionStorage.getItem("sp_onboarding")) {
+      navigation("/pixel", { replace: true });
+    }
+  }, []);
+
   const sizeRow = 20;
   const sizeCol = 30;
   const initialEnemyPos = [...numSeq(15, 0), ...numSeq(15, 20)];

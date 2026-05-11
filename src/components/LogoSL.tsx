@@ -6,7 +6,7 @@ const LogoSL = () => {
   const { setUser, setLikes, setRank, setScore, setShips } = useUserContext();
   const navigate = useNavigate();
   const { pathname: path } = useLocation();
-  const newTo = ["/main", "/signup", "/pixel", "/login", "/"].includes(path)
+  const newTo = ["/main", "/signup", "/login", "/"].includes(path)
     ? "/"
     : "usermain";
 
