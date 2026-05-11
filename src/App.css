@@ -217,6 +217,10 @@ div.color-input button {
 .justify-between { justify-content: space-between; }
 .flex-grow  { flex-grow: 1; }
 
+/* Overflow */
+.overflow-auto   { overflow: auto; }
+.overflow-hidden { overflow: hidden; }
+
 /* Gap */
 .gap-sm { gap: var(--space-sm); }
 .gap-md { gap: var(--space-md); }

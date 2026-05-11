@@ -4,88 +4,91 @@ import { FrontFetch } from '../utils/FrontFetch';
 import { useUserContext } from '../context/userContext';
 import { useDialogContext } from '../context/dialogContext';
 import useSessionExpired from '../hooks/useSessionExpired';
+import PixelStudio from './PixelStudio';
 
 import {
   DashboardHeader,
   DashboardActions,
   ShipsCollection,
-  Rankings
+  Rankings,
 } from '../components/organisms';
 import Dialog from '../components/Dialog';
 
-/**
- * UserMain component
- * 
- * Represents the user dashboard page, displaying user info,
- * ships collection, actions, and rankings.
- */
 const UserMain: React.FC = () => {
   const navigate = useNavigate();
-  const { user, ships, setShips, following, setRank, rank, setFollowing } = useUserContext();
+  const { user, ships, setShips, rank, setRank } = useUserContext();
   const { element } = useDialogContext();
 
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [showFollowingTab, setShowFollowingTab] = useState<'following' | 'ranks'>('following');
   const [newShipFlag, setNewShipFlag] = useState<boolean>(false);
+  // Canvas visibility — kept mounted to preserve auth session
+  const [showStudio, setShowStudio] = useState<boolean>(false);
 
   useSessionExpired();
 
+  // Fetch user's ships — re-runs on login, new ship, dialog close
   useEffect(() => {
-    const checkAndFetchData = async () => {
-      setIsLoading(true);
+    if (!user.id) return;
+    const fetchShips = async () => {
       try {
-        if (user.id) {
-          const followingResp = await FrontFetch.caller({
-            name: 'player',
-            method: 'get',
-            typeMethod: 'followings',
-            id: `${user.id}`,
-          });
-          setFollowing(followingResp);
-          const rankResp = await FrontFetch.caller({
-            name: 'player',
-            method: 'get',
-            typeMethod: 'ranks',
-          });
-          setRank(rankResp);
-          const shipsResp = await FrontFetch.caller({
-            name: 'ship',
-            method: 'get',
-            typeMethod: 'usership',
-            id: `${user.id}`,
-          });
-          setShips(shipsResp);
-          setErrorMsg(null);
-        }
-      } catch (error) {
-        setErrorMsg("Failed to load user data. Please try again later.");
+        const resp = await FrontFetch.caller({
+          name: 'ship', method: 'get', typeMethod: 'get', id: `${user.id}`,
+        });
+        setShips(Array.isArray(resp) ? resp : []);
+      } catch {
+        setErrorMsg('Failed to load ships. Please try again.');
       }
-      setIsLoading(false);
     };
+    fetchShips();
+  }, [user.id, newShipFlag, element?.open]);
 
-    checkAndFetchData();
-  }, [user.id, setFollowing, setRank, setShips, newShipFlag, element?.open]);
+  // Fetch global rankings — re-runs on every mount (login) and after each game
+  // UserMain re-mounts on each navigation, so this covers: login + return from game
+  useEffect(() => {
+    if (!user.id) return;
+    setIsLoading(true);
+    const fetchRankings = async () => {
+      try {
+        const scoreResp = await FrontFetch.caller({
+          name: 'score', method: 'get', typeMethod: 'get',
+        });
+        const arr: { points: number; playername: string }[] = Array.isArray(scoreResp)
+          ? scoreResp
+          : Object.values(scoreResp as Record<string, { points: number; playername: string }>);
+        // Sort desc by points, assign position
+        const ranked = [...arr]
+          .sort((a, b) => b.points - a.points)
+          .map((s, i) => ({ ...s, position: i + 1 }));
+        setRank(ranked);
+        setErrorMsg(null);
+      } catch {
+        setErrorMsg('Failed to load rankings. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchRankings();
+  }, [user.id]); // intentionally only user.id — runs fresh on every login/return
+
+  const handleDismissError = () => setErrorMsg(null);
 
   const handlePlayGame = () => {
     if (!user.active_ship_id) {
-      setErrorMsg("You need to select a ship to play. Please choose one from your collection.");
+      setErrorMsg('You need to select a ship to play. Please choose one from your collection.');
       return;
     }
     navigate('/game');
   };
 
-  const handleDismissError = () => setErrorMsg(null);
-
   return (
     <>
       <Dialog />
       <div className="container">
-        <DashboardHeader 
-          title={`Welcome back, ${user.name || 'Player'}!`} 
-          showCoins={true} 
-          showLastLogin={true}
-          isLoading={isLoading}
+        <DashboardHeader
+          title={`Welcome back, ${user.name || 'Player'}!`}
+          showCoins={true}
+          isLoading={isLoading && !user.name}
           error={errorMsg}
           onErrorClear={handleDismissError}
         />
@@ -93,35 +96,52 @@ const UserMain: React.FC = () => {
         <ShipsCollection
           ships={ships}
           isLoading={isLoading}
-          error={errorMsg}
-          onErrorClear={handleDismissError}
           activeShipId={user.active_ship_id || 0}
           showCreateButton={true}
-          onCreateShip={() => setNewShipFlag(!newShipFlag)}
+          onCreateShip={() => setShowStudio(true)}
+          error={errorMsg}
+          onErrorClear={handleDismissError}
         />
 
         <DashboardActions
           showPlayButton={true}
           showShopButton={true}
-          showStudioButton={true}
+          showStudioButton={false}
           isShipSelected={!!user.active_ship_id}
           onPlay={handlePlayGame}
           onShop={() => navigate('/shop')}
-          onStudio={() => navigate('/pixel')}
-          error={errorMsg}
-          onErrorClear={handleDismissError}
         />
 
+        {/* Canvas embebido — siempre montado para mantener sesión, toggle con display */}
+        <div style={{ display: showStudio ? 'block' : 'none' }}>
+          <div className="bg-surface rounded-md shadow-md p-md mb-md animate-fade-in">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <h3 className="text-lg font-medium" style={{ margin: 0 }}>Pixel Studio</h3>
+              <button
+                onClick={() => setShowStudio(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem', color: 'var(--color-text-muted)' }}
+                aria-label="Close studio"
+              >
+                ✕
+              </button>
+            </div>
+            <PixelStudio title={false} setNewShip={setNewShipFlag} />
+          </div>
+        </div>
+
         <Rankings
-          rankings={rank}
-          following={following}
+          rankings={rank.map((s) => ({
+            id: s.position ?? 0,
+            name: s.playername,
+            points: s.points,
+            position: s.position,
+          }))}
+          following={[]}
           currentUserName={user.name || ''}
           currentUserId={user.id || 0}
           isLoading={isLoading}
-          error={errorMsg}
-          onErrorClear={handleDismissError}
-          showTabs={true}
           title="Player Rankings"
+          showTabs={false}
         />
       </div>
     </>
