@@ -84,16 +84,16 @@ input:has(+.btn-password):hover+.btn-password,
    Botones temáticos
    -------------------------------------------------------------------------- */
 .button_play {
-  color: #b836ba;
+  color: #d45fdc;
   margin: 0.5rem auto;
-  border: 2px solid #b836ba;
+  border: 2px solid #d45fdc;
   background-color: transparent;
   transition: background-color 0.2s, color 0.2s;
 }
 
 .button_play:hover {
-  background-color: #b836ba;
-  color: #242424;
+  background-color: #d45fdc;
+  color: #0d0d0d;
 }
 
 .link_shop {
@@ -101,16 +101,16 @@ input:has(+.btn-password):hover+.btn-password,
   width: fit-content;
   position: relative;
   margin: .5rem auto;
-  border: 1px solid #646cff;
+  border: 1px solid #7c83ff;
   padding: 4px 16px;
-  color: #646cff;
+  color: #7c83ff;
   background-color: transparent;
   transition: background-color 0.2s, color 0.2s;
 }
 
 .link_shop:hover {
-  background-color: #535bf2;
-  color: #242424;
+  background-color: #7c83ff;
+  color: #0d0d0d;
 }
 
 /* --------------------------------------------------------------------------
@@ -165,17 +165,17 @@ div.color-input button {
    Variables CSS — usadas por los organismos scaffoldeados
    ========================================================================== */
 :root {
-  --color-primary: #646cff;
-  --color-primary-light: rgba(100, 108, 255, 0.15);
-  --color-secondary: #b836ba;
-  --color-error: #e74c3c;
-  --color-error-light: rgba(231, 76, 60, 0.1);
-  --color-success: #2ecc71;
-  --color-surface: #1e1e1e;
-  --color-border: #2d2d2d;
+  --color-primary: #7c83ff;
+  --color-primary-light: rgba(124, 131, 255, 0.18);
+  --color-secondary: #d45fdc;
+  --color-error: #f05252;
+  --color-error-light: rgba(240, 82, 82, 0.12);
+  --color-success: #34d399;
+  --color-surface: #1a1a1e;
+  --color-border: #2d2d38;
   --color-text: #e5e7eb;
   --color-text-secondary: #9ca3af;
-  --color-text-muted: #6b7280;
+  --color-text-muted: #8b949e;
 
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;

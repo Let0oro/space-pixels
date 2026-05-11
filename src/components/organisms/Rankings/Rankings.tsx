@@ -211,7 +211,7 @@ const Rankings: React.FC<RankingsProps> = ({
   onSortChange,
   onTabChange,
   onPageChange,
-  maxHeight = '400px',
+  maxHeight = '600px',
   highlightCurrentUser = true,
   emptyStateContent,
   headerContent,
@@ -323,7 +323,7 @@ const Rankings: React.FC<RankingsProps> = ({
 
   return (
     <div
-      className={`bg-surface rounded-md shadow-md p-md animate-fade-in ${className}`}
+      className={`bg-surface rounded-md shadow-md p-md animate-fade-in mb-lg ${className}`}
       style={{ ...customStyle }}
     >
       <h3 className="text-lg font-medium mb-sm">{title}</h3>

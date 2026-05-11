@@ -28,49 +28,56 @@ const ShipsList = memo(
           name: "ship",
           method: "get",
           typeMethod: "likedplayer",
-          id: `${user.id}`
+          id: `${user.id}`,
         });
         if (response) setLikes(Array.isArray(response) ? response : Object.values(response));
       };
       getLikesPlayer();
     }, [element?.open]);
 
-    if (ships?.length)
+    if (!ships?.length) {
       return (
-        <div style={{ display: "flex" }}>
-          <div
-            style={{
-              display: "flex",
-              padding: "8px 16px",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto",
-              gap: "8px",
-              flexWrap: "wrap",
-              maxWidth: "420px",
-              minWidth: "content",
-            }}
-          >
-            {ships
-              .sort(({ store_id: a }, { store_id: b }) => (a && b ? a - b : 0))
-              .map(({ pixels, ship_id, name, player_id, store_id, price }) => {
-                const boxShadow = shadowPixel(pixels);
-
-                return (
-                  <CardShip
-                    key={ship_id}
-                    store_id={store_id}
-                    name={name}
-                    ship_id={ship_id}
-                    player_id={player_id}
-                    boxShadow={boxShadow}
-                    price={price}
-                  />
-                );
-              })}
-          </div>
+        <div
+          style={{
+            padding: "2.5rem 1rem",
+            textAlign: "center",
+            color: "var(--color-text-muted)",
+            fontSize: "0.9rem",
+          }}
+        >
+          No ships here yet.
         </div>
       );
+    }
+
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "1rem",
+          justifyContent: "center",
+          padding: "0.5rem 0",
+        }}
+      >
+        {ships
+          .sort(({ store_id: a }, { store_id: b }) => (a && b ? a - b : 0))
+          .map(({ pixels, ship_id, name, player_id, store_id, price }) => {
+            const boxShadow = shadowPixel(pixels);
+            return (
+              <CardShip
+                key={ship_id}
+                store_id={store_id}
+                name={name}
+                ship_id={ship_id}
+                player_id={player_id}
+                boxShadow={boxShadow}
+                price={price}
+              />
+            );
+          })}
+      </div>
+    );
   }
 );
 
