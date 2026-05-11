@@ -307,3 +307,10 @@ dialog {
   padding: var(--space-lg);
   max-width: 90vw;
 }
+
+@keyframes startPulse {
+  0%   { box-shadow: 0 0 12px rgba(124,131,255,0.2); }
+  50%  { box-shadow: 0 0 28px rgba(124,131,255,0.45); }
+  100% { box-shadow: 0 0 12px rgba(124,131,255,0.2); }
+}
+

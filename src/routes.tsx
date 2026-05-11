@@ -1,5 +1,5 @@
-import { lazy, Suspense } from "react";
-import { createBrowserRouter, Outlet, Navigate } from "react-router-dom";
+import { lazy, Suspense, ReactNode } from "react";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "./App";
 import ErrorPage from "./components/ErrorPage";
 import { useUserContext } from "./context/userContext";
@@ -93,7 +93,7 @@ const RouteLoading = () => (
 /**
  * Auth guard component to protect routes
  */
-const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+const AuthGuard = ({ children }: { children: ReactNode }) => {
   const { user } = useUserContext();
   const isAuthenticated = !!user.id;
 
@@ -114,11 +114,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: (
-          <Suspense fallback={<RouteLoading />}>
-            <Entrance />
-          </Suspense>
-        ),
+        element: <Navigate to="/main" replace />,
       },
       {
         path: "main",

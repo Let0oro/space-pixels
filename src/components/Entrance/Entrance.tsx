@@ -1,40 +1,41 @@
 import { useEffect, useRef, useState } from "react";
 import "./Entrance.css";
-import MessageToSL from "./MessageToSL";
+import { MessageToSL } from "./MessageToSL";
+
 const Entrance = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-
   const [finish, setFinish] = useState(false);
 
   useEffect(() => {
     if (audioRef.current) {
-      audioRef?.current.play();
+      audioRef.current.play().catch(() => {
+        // Autoplay blocked — App.tsx will show the START button
+      });
     }
-    setTimeout(() => {
-      if (audioRef.current?.volume) {
+    const fadeTimer = setTimeout(() => {
+      if (audioRef.current) {
         audioRef.current.volume = 0.5;
       }
     }, 45000);
-    setTimeout(() => {
-      setFinish(!finish);
-      if (audioRef.current?.volume) {
+    const finishTimer = setTimeout(() => {
+      setFinish(true);
+      if (audioRef.current) {
         audioRef.current.volume = 0;
       }
     }, 50000);
+
+    return () => {
+      clearTimeout(fadeTimer);
+      clearTimeout(finishTimer);
+    };
   }, []);
 
   if (finish) return <MessageToSL />;
 
-  if (!finish) 
-    return (
-    <div
-      className="bodyEntrance"
-      style={{
-        top: (document.body.clientHeight - 450) / 2,
-      }}
-    >
+  return (
+    <div className="bodyEntrance">
       <div className="star-wars-intro">
-        <audio ref={audioRef} src="../../../public/star-wars-intro.mp3" />
+        <audio ref={audioRef} src="/star-wars-intro.mp3" />
         <div className="crawl">
           <p className="title">SPACE INVADERS</p>
           <p>Hace mucho tiempo, en una galaxia no tan lejana...</p>
@@ -78,4 +79,5 @@ const Entrance = () => {
     </div>
   );
 };
+
 export default Entrance;

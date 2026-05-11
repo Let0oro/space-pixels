@@ -1,47 +1,82 @@
 
 .bodyEntrance {
-    height: 450px;
-    width: 320px;
-    background-color: #1a1a1a;
-    position: absolute;
-    inset: 0;
-    margin: 0 auto;
-    overflow: hidden;
+  height: 560px;
+  width: min(680px, 92vw);
+  background-color: #08080f;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  border-left: 1px solid rgba(124, 131, 255, 0.1);
+  border-right: 1px solid rgba(124, 131, 255, 0.1);
+  box-shadow:
+    0 0 60px rgba(124, 131, 255, 0.08),
+    inset 0 0 40px rgba(0, 0, 0, 0.6);
+  z-index: 1;
 }
 
 .star-wars-intro {
-    position: relative;
-    height: 100vh;
-    overflow: hidden;
-    perspective: 400px;
-  }
-  
-  .crawl {
-    position: absolute;
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  perspective: 400px;
+  background: radial-gradient(ellipse at 50% 100%, rgba(124, 131, 255, 0.06) 0%, transparent 70%);
+}
+
+.crawl {
+  position: absolute;
+  bottom: -80%;
+  height: 100%;
+  width: 100%;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 1.7;
+  transform-origin: 50% 100%;
+  animation: crawl 55s linear infinite;
+  color: #c8c8e8;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+@keyframes crawl {
+  0% {
     bottom: -80%;
-    height: 100%;
-    width: 100%;
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
+    transform: rotateX(25deg);
     transform-origin: 50% 100%;
-    animation: crawl 55s linear infinite;
   }
-  
-  @keyframes crawl {
-    0% {
-      bottom: -80%;
-      transform: rotateX(25deg);
-      transform-origin: 50% 100%;
-    }
-    100% {
-      bottom: 310%;
-      transform: rotateX(25deg);
-      transform-origin: 50% 350%;
-    }
+  100% {
+    bottom: 310%;
+    transform: rotateX(25deg);
+    transform-origin: 50% 350%;
   }
-  
-  .title {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-  }
+}
+
+.title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.15em;
+  color: var(--color-primary, #7c83ff);
+  text-shadow: 0 0 20px rgba(124, 131, 255, 0.6);
+}
+
+/* Stars background dots */
+.star-wars-intro::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 10% 50%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 75%, rgba(255,255,255,0.4) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 35% 90%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 85%, rgba(255,255,255,0.4) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}

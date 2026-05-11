@@ -54,7 +54,7 @@ const LogoSL = () => {
   } else returned.push(logo, logoutDiv);
 
   return (
-    <div>
+    <div style={{ zIndex: 10 }}>
       {returned.map((el, ix) => (
         <div key={ix}>{el}</div>
       ))}
