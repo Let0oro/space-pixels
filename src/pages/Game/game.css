@@ -4,15 +4,17 @@
   inherits: false;
 }
 
+/* ─── Grid cells ─────────────────────────────────────────────────────────── */
 .gridDiv {
-  background-color: #2a2a74;
-  border: 1px solid black;
+  background-color: #0d0d1a;
+  border: 1px solid rgba(124, 131, 255, 0.08);
   box-sizing: border-box;
   aspect-ratio: 1;
 }
 
+/* ─── Player ship ─────────────────────────────────────────────────────────── */
 .player_ship.reloading {
-  background-color: #2a2a74;
+  background-color: #0d0d1a;
   filter: grayscale(0.6);
 }
 
@@ -24,15 +26,17 @@
   margin: 0 auto;
   scale: 2;
   mix-blend-mode: overlay;
-  border: 1px solid #aaa3;
+  border: 1px solid rgba(124, 131, 255, 0.2);
   z-index: -1;
   content: "";
   width: 100%;
   height: 100%;
-  background-image: conic-gradient(transparent 0deg,
-      transparent var(--a),
-      #eee2 var(--a),
-      #eee2 360deg);
+  background-image: conic-gradient(
+    transparent 0deg,
+    transparent var(--a),
+    rgba(124, 131, 255, 0.15) var(--a),
+    rgba(124, 131, 255, 0.15) 360deg
+  );
 }
 
 .player_ship.reloading::after {
@@ -43,12 +47,14 @@
   transition: --a 1s linear;
 }
 
+/* ─── Enemy ships ─────────────────────────────────────────────────────────── */
 .enemy_ship {
-  background-color: orange;
+  background-color: #d45fdc;
+  border-radius: 1px;
 }
 
 .enemy_ship.shoot {
-  background-color: red;
+  background-color: #f05252;
 }
 
 .enemy_ship-prepare {
@@ -58,9 +64,10 @@
   border-radius: 8px;
   width: 50%;
   height: 100%;
-  background-color: chocolate;
+  background-color: #b84cbc;
 }
 
+/* ─── Player shadow (pixel art rendering) ─────────────────────────────────── */
 .player_ship--shadow {
   transform: scale(2);
   height: 2px;
@@ -72,31 +79,27 @@
   justify-content: center;
 }
 
+/* ─── Projectiles ─────────────────────────────────────────────────────────── */
 .shoot {
-  background-color: yellow;
+  background-color: #7c83ff;
   border-radius: 50%;
+  box-shadow: 0 0 4px #7c83ff88;
 }
 
 .enemy_shoot {
-  background-color: blueviolet;
+  background-color: #d45fdc;
   border-radius: 20% 5% 20% 5% 20% 5% 20% 5%;
+  box-shadow: 0 0 4px #d45fdc88;
 }
 
 .enemy_ship.player_ship {
-  background-color: red;
+  background-color: #f05252;
 }
 
+/* ─── Advice toast ────────────────────────────────────────────────────────── */
 @keyframes advice {
-
-  0%,
-  100% {
-    bottom: 100lvh
-  }
-
-  40%,
-  60% {
-    bottom: 60lvh
-  }
+  0%, 100% { bottom: 100lvh; }
+  40%, 60%  { bottom: 60lvh; }
 }
 
 .advice-gamer {
@@ -104,22 +107,106 @@
 }
 
 .advice-gamer:not(.anim) {
-  padding: .5rem 1rem;
-  background-color: #464646;
-  color: #646cff;
+  padding: 0.5rem 1rem;
+  background-color: rgba(124, 131, 255, 0.12);
+  color: var(--color-primary, #7c83ff);
+  border: 1px solid rgba(124, 131, 255, 0.3);
+  border-radius: 6px;
   width: fit-content;
   margin-bottom: 1rem;
+  font-size: 0.875rem;
 }
 
 .advice-gamer.anim {
-  background-color: #2a2a74;
-  padding: 2rem 4rem;
+  background-color: rgba(13, 13, 26, 0.9);
+  border: 1px solid rgba(124, 131, 255, 0.3);
+  border-radius: 8px;
+  padding: 1rem 2rem;
   z-index: 1000;
   pointer-events: none;
-
   position: absolute;
   bottom: 100lvh;
   left: 0;
   right: 0;
   animation: advice 6s ease-in-out forwards;
+  color: var(--color-primary, #7c83ff);
+  font-size: 0.875rem;
+  width: fit-content;
+}
+
+/* ─── Game wrapper ────────────────────────────────────────────────────────── */
+.game-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 0.5rem;
+  min-height: 100vh;
+  background-color: #08080f;
+}
+
+.game-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 320px;
+}
+
+.game-points {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-primary, #7c83ff);
+  letter-spacing: 0.05em;
+}
+
+.game-pause-btn {
+  background: transparent;
+  border: 1px solid rgba(124, 131, 255, 0.3);
+  border-radius: 6px;
+  color: var(--color-text-muted, #8b949e);
+  font-size: 0.85rem;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+  transition: border-color 150ms ease, color 150ms ease;
+}
+
+.game-pause-btn:hover {
+  border-color: var(--color-primary, #7c83ff);
+  color: var(--color-primary, #7c83ff);
+}
+
+.game-grid-border {
+  border: 1px solid rgba(124, 131, 255, 0.2);
+  border-radius: 4px;
+  box-shadow: 0 0 32px rgba(124, 131, 255, 0.08), inset 0 0 20px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+
+/* ─── Mobile controls ─────────────────────────────────────────────────────── */
+.mobile-controls {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 320px;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.mobile-btn {
+  flex: 1;
+  padding: 0.75rem;
+  background: rgba(124, 131, 255, 0.1);
+  border: 1px solid rgba(124, 131, 255, 0.25);
+  border-radius: 8px;
+  color: var(--color-primary, #7c83ff);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.mobile-btn:active {
+  background: rgba(124, 131, 255, 0.25);
 }

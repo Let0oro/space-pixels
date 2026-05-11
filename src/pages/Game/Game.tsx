@@ -166,13 +166,17 @@ const Game: React.FC = () => {
   }, [score.points, state.points])
 
   if (!state.enemyPos.length || !ships.length) {
-    return <div>Loading...</div>;
+    return (
+      <div className="game-wrapper" style={{ justifyContent: "center" }}>
+        <p style={{ color: "var(--color-text-muted)", fontSize: "0.9rem" }}>⏳ Loading game...</p>
+      </div>
+    );
   }
 
   if (state.playerPos === -1) {
     return (
       <Suspense fallback={<div>Loading Game Over Screen...</div>}>
-        <GameOverScreen onRetry={handleRetry} onMain={handleMain} />
+        <GameOverScreen onRetry={handleRetry} onMain={handleMain} points={state.points} />
       </Suspense>
     );
   }
@@ -189,57 +193,61 @@ const Game: React.FC = () => {
   }
 
   return (
-    <div>
-      {!isMobile && advice && <div className="advice-gamer anim">Remind you can use the arrow keys to move your ship</div>}
-      <div>Points: {state.points}</div>
-      <button
-        style={{ fontSize: "clamp(.8rem, 2lvh, 1rem)" }}
-        onClick={handlePause}
-      >
-        ||
-      </button>
+    <div className="game-wrapper">
+      {!isMobile && advice && (
+        <div className="advice-gamer anim">Use arrow keys to move · ↑ to shoot</div>
+      )}
 
-      <Suspense fallback={<div>Loading Grid...</div>}>
+      {/* HUD */}
+      <div className="game-hud">
+        <span className="game-points">⬡ {state.points} pts</span>
+        <button className="game-pause-btn" onClick={handlePause}>⏸ Pause</button>
+      </div>
+
+      {/* Grid */}
+      <Suspense fallback={<div style={{ color: "var(--color-text-muted)" }}>Loading grid...</div>}>
         <div
+          className="game-grid-border"
           style={{
             width: sizeRow * 16,
             height: sizeCol * 16,
             display: "flex",
             flexWrap: "wrap",
-            margin: "0 auto",
           }}
-          className="grid"
         >
-          <GameGrid
-            state={state}
-            playerShip={playerShip}
-            handleShootCollision={handleShootCollision}
-          />
+          <div
+            style={{ width: "100%", height: "100%", display: "flex", flexWrap: "wrap" }}
+            className="grid"
+          >
+            <GameGrid
+              state={state}
+              playerShip={playerShip}
+              handleShootCollision={handleShootCollision}
+            />
+          </div>
         </div>
       </Suspense>
+
+      {/* Mobile controls */}
       {isMobile && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            margin: 0,
-            fontSize: "clamp(.8rem, 2lvh, 1rem)",
-          }}
-        >
+        <div className="mobile-controls">
           <button
+            className="mobile-btn"
             onClick={() => handleKey({ key: "ArrowLeft" } as KeyboardEvent)}
           >
-            {"<"}
+            ◀
           </button>
           <button
+            className="mobile-btn"
             onClick={() => handleKey({ key: "ArrowUp" } as KeyboardEvent)}
           >
-            {"shoot"}
+            🔴
           </button>
           <button
+            className="mobile-btn"
             onClick={() => handleKey({ key: "ArrowRight" } as KeyboardEvent)}
           >
-            {">"}
+            ▶
           </button>
         </div>
       )}
