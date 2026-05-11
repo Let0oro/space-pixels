@@ -1,300 +1,205 @@
 /* ==========================================================================
-   Space Pixels - Global Styles
+   App.css — Estilos originales (9f3e573) + utilidades para organismos
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   CSS Custom Properties (Variables)
+   Layout raíz original
    -------------------------------------------------------------------------- */
-:root {
-  /* Color System */
-  --color-primary: #4a4dbd;
-  --color-primary-light: rgba(74, 77, 189, 0.1);
-  --color-primary-dark: #3a3d9d;
-  --color-secondary: #b836ba;
-  --color-secondary-light: rgba(184, 54, 186, 0.1);
-  
-  /* Neutral Colors */
-  --color-background: #f8f9fa;
-  --color-surface: #ffffff;
-  --color-border: #e9ecef;
-  
-  /* Text Colors */
-  --color-text: #212529;
-  --color-text-secondary: #6c757d;
-  --color-text-muted: #888;
-  
-  /* Feedback Colors */
-  --color-error: #e74c3c;
-  --color-error-light: rgba(231, 76, 60, 0.1);
-  --color-success: #2ecc71;
-  --color-success-light: rgba(46, 204, 113, 0.1);
-  --color-warning: #f39c12;
-  --color-warning-light: rgba(243, 156, 18, 0.1);
-  
-  /* Spacing System */
-  --space-xs: 0.25rem;
-  --space-sm: 0.5rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
-  
-  /* Borders */
-  --border-radius-sm: 0.25rem;
-  --border-radius-md: 0.5rem;
-  --border-radius-lg: 0.75rem;
-  --border-width: 1px;
-  
-  /* Typography */
-  --font-family-base: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-size-xs: 0.75rem;
-  --font-size-sm: 0.875rem;
-  --font-size-md: 1rem;
-  --font-size-lg: 1.25rem;
-  --font-size-xl: 1.5rem;
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-bold: 700;
-  --line-height-tight: 1.25;
-  --line-height-normal: 1.5;
-  --line-height-loose: 1.75;
-  
-  /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-normal: 300ms ease;
-  --transition-slow: 500ms ease;
-  
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  
-  /* Z-index */
-  --z-index-dropdown: 1000;
-  --z-index-sticky: 1020;
-  --z-index-fixed: 1030;
-  --z-index-modal-backdrop: 1040;
-  --z-index-modal: 1050;
-  --z-index-popover: 1060;
-  --z-index-tooltip: 1070;
+#root {
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 2rem .5rem;
+  height: 70lvh;
+  width: calc(100% - 1rem);
+  position: relative;
 }
 
-/* Dark Mode Theme */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: #121212;
-    --color-surface: #1e1e1e;
-    --color-border: #2d2d2d;
-    --color-text: #e5e7eb;
-    --color-text-secondary: #9ca3af;
-    --color-text-muted: #6b7280;
-    
-    /* Adjust primary and secondary colors for dark mode */
-    --color-primary: #6366f1;
-    --color-primary-light: rgba(99, 102, 241, 0.2);
-    --color-secondary: #c65cca;
+/* --------------------------------------------------------------------------
+   Logo
+   -------------------------------------------------------------------------- */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
   }
 }
 
-/* Manual Dark Mode Class */
-.dark-theme {
-  --color-background: #121212;
+/* --------------------------------------------------------------------------
+   Botón contraseña
+   -------------------------------------------------------------------------- */
+input:has(+.btn-password):hover+.btn-password,
+.btn-password:hover {
+  opacity: 1;
+}
+
+.btn-password,
+.btn-password:focus,
+.btn-password:active {
+  border: 0;
+  outline: 0;
+}
+
+.btn-password {
+  opacity: 0;
+  height: .8rem;
+  width: 1rem;
+  padding: 0;
+  background-color: transparent;
+  position: absolute;
+  translate: -0.25rem -0.2rem;
+  right: 0;
+
+  i {
+    height: 100%;
+    width: 100%;
+  }
+
+  transition: opacity 300ms ease-in;
+}
+
+/* --------------------------------------------------------------------------
+   Botones temáticos
+   -------------------------------------------------------------------------- */
+.button_play {
+  color: #b836ba;
+  margin: 0.5rem auto;
+  border: 2px solid #b836ba;
+  background-color: transparent;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.button_play:hover {
+  background-color: #b836ba;
+  color: #242424;
+}
+
+.link_shop {
+  display: block;
+  width: fit-content;
+  position: relative;
+  margin: .5rem auto;
+  border: 1px solid #646cff;
+  padding: 4px 16px;
+  color: #646cff;
+  background-color: transparent;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.link_shop:hover {
+  background-color: #535bf2;
+  color: #242424;
+}
+
+/* --------------------------------------------------------------------------
+   Formularios
+   -------------------------------------------------------------------------- */
+form legend {
+  font-size: large;
+}
+
+form input {
+  text-align: center;
+  font-size: 1rem;
+  border: 1px solid #888;
+  border-radius: 0;
+  background-color: #3b3b3b;
+  outline: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Selector de tamaño (canvas)
+   -------------------------------------------------------------------------- */
+.number_selector {
+  width: 3rem;
+  background-color: #646cffc0;
+  transition: border-color 0.25s;
+  border: 1px solid transparent;
+  border-color: transparent;
+  padding: 4px;
+  cursor: pointer;
+
+  & option {
+    background-color: #1a1a1a;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Color input (PixelStudio)
+   -------------------------------------------------------------------------- */
+div.color-input > * {
+  display: flex;
+  border: none;
+  outline: none;
+  color: inherit;
+  font-weight: 100;
+}
+
+div.color-input button {
+  border: 1px solid white;
+}
+
+/* ==========================================================================
+   Variables CSS — usadas por los organismos scaffoldeados
+   ========================================================================== */
+:root {
+  --color-primary: #646cff;
+  --color-primary-light: rgba(100, 108, 255, 0.15);
+  --color-secondary: #b836ba;
+  --color-error: #e74c3c;
+  --color-error-light: rgba(231, 76, 60, 0.1);
+  --color-success: #2ecc71;
   --color-surface: #1e1e1e;
   --color-border: #2d2d2d;
   --color-text: #e5e7eb;
   --color-text-secondary: #9ca3af;
   --color-text-muted: #6b7280;
-  --color-primary: #6366f1;
-  --color-primary-light: rgba(99, 102, 241, 0.2);
-  --color-secondary: #c65cca;
+
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+
+  --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.5rem;
+  --border-radius-lg: 0.75rem;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.15);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.25);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.25);
+
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
 }
 
-/* --------------------------------------------------------------------------
-   Modern CSS Reset
-   -------------------------------------------------------------------------- */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
+/* ==========================================================================
+   Clases de utilidad — requeridas por DashboardHeader, DashboardActions,
+   ShipsCollection, Rankings y organismos scaffoldeados
+   ========================================================================== */
 
-/* Remove default margin and padding */
-html, body, h1, h2, h3, h4, p, figure, blockquote, dl, dd {
-  margin: 0;
-  padding: 0;
-}
-
-/* Set core body defaults */
-body {
-  min-height: 100vh;
-  scroll-behavior: smooth;
-  text-rendering: optimizeSpeed;
-  line-height: var(--line-height-normal);
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-md);
-  color: var(--color-text);
-  background-color: var(--color-background);
-  transition: color var(--transition-normal), background-color var(--transition-normal);
-}
-
-/* Make images easier to work with */
-img, picture {
-  max-width: 100%;
-  display: block;
-}
-
-/* Inherit fonts for inputs and buttons */
-input, button, textarea, select {
-  font: inherit;
-}
-
-/* Remove all animations and transitions for people that prefer not to see them */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   Base Styles
-   -------------------------------------------------------------------------- */
-#root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-a {
-  color: var(--color-primary);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-a:hover {
-  color: var(--color-primary-dark);
-}
-
-a:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-/* --------------------------------------------------------------------------
-   Animations
-   -------------------------------------------------------------------------- */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideIn {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-/* --------------------------------------------------------------------------
-   Form Elements
-   -------------------------------------------------------------------------- */
-input, select, textarea {
-  background-color: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--border-radius-sm);
-  padding: var(--space-sm) var(--space-md);
-  color: var(--color-text);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px var(--color-primary-light);
-}
-
-label {
-  display: block;
-  margin-bottom: var(--space-xs);
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-}
-
-fieldset {
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  padding: var(--space-md);
-  margin-bottom: var(--space-md);
-}
-
-legend {
-  padding: 0 var(--space-sm);
-  font-weight: var(--font-weight-medium);
-}
-
-/* Password input specific styling */
-.password-field {
-  position: relative;
-}
-
-.password-toggle {
-  position: absolute;
-  right: var(--space-sm);
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  padding: var(--space-xs);
-}
-
-/* --------------------------------------------------------------------------
-   Accessibility Enhancements
-   -------------------------------------------------------------------------- */
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 0;
-  background: var(--color-primary);
-  color: white;
-  padding: 8px;
-  z-index: 100;
-}
-
-.skip-link:focus {
-  top: 0;
-}
-
-/* Focus styles */
-:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-/* --------------------------------------------------------------------------
-   Utility Classes
-   -------------------------------------------------------------------------- */
 /* Layout */
 .container {
   width: 100%;
@@ -303,94 +208,89 @@ legend {
   padding-inline: var(--space-md);
 }
 
-/* Flex utilities */
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.flex-row { flex-direction: row; }
+/* Flex */
+.flex       { display: flex; }
+.flex-wrap  { flex-wrap: wrap; }
+.flex-col   { flex-direction: column; }
 .items-center { align-items: center; }
 .justify-center { justify-content: center; }
 .justify-between { justify-content: space-between; }
-.flex-wrap { flex-wrap: wrap; }
-.flex-grow { flex-grow: 1; }
+.flex-grow  { flex-grow: 1; }
+
+/* Gap */
 .gap-sm { gap: var(--space-sm); }
 .gap-md { gap: var(--space-md); }
 .gap-lg { gap: var(--space-lg); }
+.ml-sm  { margin-left: var(--space-sm); }
 
 /* Spacing */
-.m-0 { margin: 0; }
-.mt-sm { margin-top: var(--space-sm); }
-.mt-md { margin-top: var(--space-md); }
-.mt-lg { margin-top: var(--space-lg); }
+.p-sm  { padding: var(--space-sm); }
+.p-md  { padding: var(--space-md); }
+.p-lg  { padding: var(--space-lg); }
 .mb-sm { margin-bottom: var(--space-sm); }
 .mb-md { margin-bottom: var(--space-md); }
 .mb-lg { margin-bottom: var(--space-lg); }
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
 
-.p-0 { padding: 0; }
-.p-sm { padding: var(--space-sm); }
-.p-md { padding: var(--space-md); }
-.p-lg { padding: var(--space-lg); }
-
-/* Text */
-.text-center { text-align: center; }
-.text-left { text-align: start; }
-.text-right { text-align: end; }
-
-.text-primary { color: var(--color-primary); }
-.text-secondary { color: var(--color-secondary); }
-.text-muted { color: var(--color-text-muted); }
-.text-error { color: var(--color-error); }
-.text-success { color: var(--color-success); }
-
-.text-sm { font-size: var(--font-size-sm); }
-.text-md { font-size: var(--font-size-md); }
-.text-lg { font-size: var(--font-size-lg); }
-.text-xl { font-size: var(--font-size-xl); }
-
-.font-normal { font-weight: var(--font-weight-normal); }
-.font-medium { font-weight: var(--font-weight-medium); }
-.font-bold { font-weight: var(--font-weight-bold); }
-
-/* Background and borders */
-.bg-surface { background-color: var(--color-surface); }
-.bg-primary { background-color: var(--color-primary); }
-.bg-primary-light { background-color: var(--color-primary-light); }
-.bg-error-light { background-color: var(--color-error-light); }
-.bg-success-light { background-color: var(--color-success-light); }
-
+/* Borders */
 .rounded-sm { border-radius: var(--border-radius-sm); }
 .rounded-md { border-radius: var(--border-radius-md); }
 .rounded-lg { border-radius: var(--border-radius-lg); }
+.rounded    { border-radius: var(--border-radius-sm); }
 
-.border { border: var(--border-width) solid var(--color-border); }
-.border-primary { border-color: var(--color-primary); }
-
-/* Shadow */
+/* Shadows */
 .shadow-sm { box-shadow: var(--shadow-sm); }
 .shadow-md { box-shadow: var(--shadow-md); }
 .shadow-lg { box-shadow: var(--shadow-lg); }
 
-/* Animation utilities */
+/* Backgrounds */
+.bg-surface       { background-color: var(--color-surface); }
+.bg-primary       { background-color: var(--color-primary); }
+.bg-primary-light { background-color: var(--color-primary-light); }
+.bg-error-light   { background-color: var(--color-error-light); }
+
+/* Text colors */
+.text-primary   { color: var(--color-primary); }
+.text-secondary { color: var(--color-secondary); }
+.text-muted     { color: var(--color-text-muted); }
+.text-error     { color: var(--color-error); }
+
+/* Text sizes */
+.text-sm { font-size: 0.875rem; }
+.text-md { font-size: 1rem; }
+.text-lg { font-size: 1.25rem; }
+.text-xl { font-size: 1.5rem; }
+
+/* Font weights */
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-bold   { font-weight: 700; }
+
+/* Width helpers (skeleton) */
+.w-3\/4 { width: 75%; }
+.w-1\/2 { width: 50%; }
+.h-4    { height: 1rem; }
+.h-8    { height: 2rem; }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
 .animate-fade-in { animation: fadeIn var(--transition-normal); }
-.animate-slide-in { animation: slideIn var(--transition-normal); }
-.animate-pulse { animation: pulse 1.5s infinite; }
-.animate-spin { animation: spin 1s linear infinite; }
+.animate-pulse   { animation: pulse 1.5s ease-in-out infinite; }
 
-/* Responsive utilities */
-@media (max-width: 640px) {
-  .hidden-sm { display: none; }
-}
-
-@media (max-width: 768px) {
-  .hidden-md { display: none; }
-}
-
-@media (max-width: 1024px) {
-  .hidden-lg { display: none; }
-}
-
-/* Dialog global styles */
+/* Dialog */
 dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0,0,0,0.5);
   backdrop-filter: blur(2px);
 }
 
