@@ -2,7 +2,6 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter, Outlet, Navigate } from "react-router-dom";
 import App from "./App";
 import ErrorPage from "./components/ErrorPage";
-import { MainTemplate } from "./components/templates/MainTemplate";
 import { useUserContext } from "./context/userContext";
 
 // Lazy load components for code splitting
@@ -112,14 +111,6 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
-    errorElement: (
-      <MainTemplate 
-        title="Error" 
-        errorMessage="Something went wrong"
-      >
-        <ErrorPage />
-      </MainTemplate>
-    ),
     children: [
       {
         index: true,
@@ -190,16 +181,7 @@ export const router = createBrowserRouter([
       {
         path: "*",
         element: (
-          <MainTemplate 
-            title="Not Found" 
-            errorMessage="Page not found"
-          >
-            <div className="text-center p-lg">
-              <h1 className="text-xl mb-md">404 - Page Not Found</h1>
-              <p className="mb-md">The page you're looking for doesn't exist.</p>
-              <a href="/" className="text-primary">Return to Home</a>
-            </div>
-          </MainTemplate>
+          <ErrorPage />
         ),
       },
     ],
