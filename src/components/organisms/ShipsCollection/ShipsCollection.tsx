@@ -16,16 +16,6 @@ const ShipsList = lazy(() => import("../../UserMain/ShipList"));
  */
 const STATUS_LEGEND_ITEMS: StatusLegendItem[] = [
   { 
-    status: 'published', 
-    label: 'Published', 
-    className: 'bg-success-light p-sm rounded-sm' 
-  },
-  { 
-    status: 'unpublished', 
-    label: 'Unpublished', 
-    className: 'bg-surface p-sm rounded-sm border' 
-  },
-  { 
     status: 'selected', 
     label: 'Current selected', 
     className: 'border-primary p-sm rounded-sm border-2' 
@@ -112,15 +102,6 @@ const ShipsCollection: React.FC<ShipsCollectionProps> = ({
   const selectedShipId = activeShipId !== undefined ? activeShipId : user.active_ship_id;
   
   /**
-   * Handle ship selection
-   */
-  const handleShipSelect = (shipId: number) => {
-    if (onShipSelect) {
-      onShipSelect(shipId);
-    }
-  };
-  
-  /**
    * Clear error message
    */
   const clearError = () => {
@@ -165,7 +146,6 @@ const ShipsCollection: React.FC<ShipsCollectionProps> = ({
                 user={user}
                 ships={ships}
                 player_selected={selectedShipId || 0}
-                onSelect={handleShipSelect}
               />
             </Suspense>
           )}
@@ -174,7 +154,7 @@ const ShipsCollection: React.FC<ShipsCollectionProps> = ({
           {showLegend && ships && ships.length > 0 && <ShipStatusLegend />}
           
           {/* Create ship button */}
-          {showCreateButton && (
+          {!!ships && ships.length > 0 && showCreateButton && (
             <div className="text-center mt-md">
               <Button 
                 variant="secondary" 

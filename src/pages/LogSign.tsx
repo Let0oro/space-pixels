@@ -186,9 +186,15 @@ const LogSign = ({ type }: { type: "login" | "register" }) => {
             dispatch({ type: "ERROR", message: "Registered! Please log in manually." });
           }
         } else {
-          // Login: store form identifiers so useSessionExpired can fetch the real user
+          // Login: fetch user data to populate context before navigating
           const { password: _pw, ...identifiers } = data;
           localStorage.setItem("user", JSON.stringify(identifiers));
+          const player = await FrontFetch.caller({
+            name: "player", method: "get", typeMethod: "get",
+            id: identifiers.name ?? identifiers.nameoremail,
+          });
+          const playerData = Array.isArray(player) ? player[0] : (player?.player?.[0] ?? player);
+          if (playerData?.id) setUser(playerData);
           dispatch({ type: "SUCCESS" });
           navigate("/usermain");
         }

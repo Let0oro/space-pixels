@@ -40,7 +40,7 @@ function App() {
 
         <Outlet />
 
-        {autoplayBlocked && (
+        {autoplayBlocked && path === "/main" && (
           <button
             onClick={() => {
               setAutoplayBlocked(false);

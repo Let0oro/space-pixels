@@ -131,24 +131,34 @@ const PixelStudio = ({
     }
   }, []);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const confirmAvatar = async () => {
+    if (isSubmitting) return;
     if (!user?.id) {
       alert("Still loading user data, please wait a moment and try again.");
       return;
     }
-    const secuence = pxArr.flat(1);
-    const response = await FrontFetch.caller(
-      { name: "ship", method: "post", typeMethod: "painted" },
-      { secuence, player: user }
-    );
-    if (response) {
-      sessionStorage.removeItem("sp_onboarding");
-      if (path == "/pixel") {
-        navigate("/usermain");
-      } else {
-        setNewShip && setNewShip((bfr) => !bfr);
+    setIsSubmitting(true);
+    try {
+      const secuence = pxArr.flat(1);
+      const response = await FrontFetch.caller(
+        { name: "ship", method: "post", typeMethod: "painted" },
+        { secuence, player: user }
+      );
+      if (response) {
+        sessionStorage.removeItem("sp_onboarding");
+        if (path == "/pixel") {
+          navigate("/usermain");
+        } else {
+          setNewShip && setNewShip((bfr) => !bfr);
+        }
+        setPxArr(Array(size).fill(Array(size).fill("#0000")));
       }
-      setPxArr(Array(size).fill(Array(size).fill("#0000")));
+    } catch {
+      // Silently handle — user can retry
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -182,10 +192,10 @@ const PixelStudio = ({
         <ShowAvatar />
         <button
           onClick={confirmAvatar}
-          disabled={!user?.id}
-          style={{ opacity: user?.id ? 1 : 0.4, cursor: user?.id ? "pointer" : "not-allowed" }}
+          disabled={!user?.id || isSubmitting}
+          style={{ opacity: user?.id && !isSubmitting ? 1 : 0.4, cursor: user?.id && !isSubmitting ? "pointer" : "not-allowed" }}
         >
-          {user?.id ? "Confirm avatar" : "⏳ Loading session..."}
+          {isSubmitting ? "⏳ Creating..." : user?.id ? "Confirm avatar" : "⏳ Loading session..."}
         </button>
       </div>
     </div>

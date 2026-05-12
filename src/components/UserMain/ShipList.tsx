@@ -1,6 +1,5 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect } from "react";
 import { useUserContext } from "../../context/userContext";
-import { useDialogContext } from "../../context/dialogContext";
 import { FrontFetch } from "../../utils/FrontFetch";
 import shadowPixel from "../../utils/shadowPixel";
 
@@ -28,8 +27,6 @@ const ShipsList = memo(
     player_selected: number;
   }) => {
     const { setUser, setShips } = useUserContext();
-    const { element, setShipInfo, setType } = useDialogContext();
-    const [publicMode, setPublicMode] = useState<boolean>(false);
 
     const deleteSelected = async () => {
       const response = await FrontFetch.caller({
@@ -56,17 +53,6 @@ const ShipsList = memo(
       }
     };
 
-    const publicSelect = async (
-      ship_id: number,
-      store_id?: number | null,
-      from_other_id?: number | null
-    ) => {
-      if (from_other_id != null) return;
-      setShipInfo({ ship_id, store_id });
-      setType("public");
-      element?.showModal();
-    };
-
     const changeSelected = async (ship_id: number) => {
       if (!ship_id || !user.id) return;
       const response = await FrontFetch.caller(
@@ -88,11 +74,6 @@ const ShipsList = memo(
 
     return (
       <div style={{ display: "flex", gap: ".4rem" }}>
-        <div>
-          <button onClick={() => setPublicMode((prev: boolean) => !prev)}>
-            Select by public state
-          </button>
-        </div>
         <div
           style={{
             display: "flex",
@@ -107,23 +88,17 @@ const ShipsList = memo(
             scrollbarWidth: "thin",
           }}
         >
-          {ships.map(({ pixels, ship_id, store_id, from_other_id }) => {
+          {ships.map(({ pixels, ship_id }) => {
             const boxShadow = shadowPixel(pixels);
             return (
               <div
                 className="ship"
                 key={ship_id}
-                onClick={() =>
-                  publicMode
-                    ? store_id
-                      ? publicSelect(ship_id, store_id, from_other_id)
-                      : publicSelect(ship_id)
-                    : changeSelected(ship_id)
-                }
+                onClick={() => changeSelected(ship_id)}
                 style={{
                   width: "32px",
                   height: "32px",
-                  backgroundColor: `${publicMode ? (store_id ? "green" : "gray") : "transparent"}`,
+                  backgroundColor: "transparent",
                   border: `1px solid ${ship_id == player_selected ? "green" : "transparent"}`,
                   minWidth: "32px",
                 }}
