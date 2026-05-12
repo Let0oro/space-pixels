@@ -14,7 +14,7 @@ interface CardShipParams {
 }
 
 const CardShip = ({
-  ship_id,
+  ship_id: _ship_id,
   price,
   name,
   player_id,

@@ -1,4 +1,3 @@
-export { default } from './Pixel';
-export * from './Pixel';
-export * from './Pixel.styles';
+// Pixel component — placeholder
+export default {};
 

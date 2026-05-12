@@ -167,9 +167,9 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             )}
             
             {/* Last login */}
-            {showLastLogin && user.lastLogin && (
+            {(user as any).lastLogin && showLastLogin && (
               <div className="text-sm text-muted">
-                Last login: {formatDate(user.lastLogin)}
+                Last login: {formatDate((user as any).lastLogin)}
               </div>
             )}
             

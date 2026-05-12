@@ -116,7 +116,7 @@ const DashboardActions: React.FC<DashboardActionsProps> = ({
     : !!user.active_ship_id;
   
   // Get selected ship ID from props or context
-  const activeShipId = selectedShipId !== undefined 
+  selectedShipId !== undefined 
     ? selectedShipId 
     : user.active_ship_id;
   

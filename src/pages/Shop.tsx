@@ -70,8 +70,8 @@ const Shop = () => {
         const ships = Array.isArray(response)
           ? response
           : response && typeof response === "object"
-            ? Object.values(response).filter(
-                (v): v is any => v && typeof v === "object" && "ship_id" in v
+            ? (Object.values(response) as object[]).filter(
+                (v): v is { ship_id: number } => "ship_id" in v
               )
             : [];
         if (ships.length) setShips(ships);

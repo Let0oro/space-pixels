@@ -5,7 +5,6 @@ import { Button } from '../../atoms/Button';
 import { 
   ShipsCollectionProps, 
   StatusLegendItem,
-  ShipStatus
 } from './ShipsCollection.types';
 
 // Lazy-loaded components
@@ -75,7 +74,7 @@ const ShipsCollection: React.FC<ShipsCollectionProps> = ({
   customStyle = {},
   className = '',
   ships: propShips,
-  onShipSelect,
+  onShipSelect: _onShipSelect,
   showLegend = true,
   title = "Your Ships Collection",
   isLoading: propIsLoading,
